@@ -87,6 +87,37 @@ a.lnk{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(217,
       color:var(--muted);line-height:1.9}
 .foot b{color:var(--ink)}
 @media(max-width:820px){.app{flex-direction:column}aside{width:auto;flex:none;height:auto;position:static}}
+
+/* 가계부 달력 */
+.cal-sumbar{display:flex;gap:18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);
+      padding:11px 15px;margin:13px 0 10px;font-size:9pt;color:var(--muted)}
+.cal-sumbar b{color:var(--ink);font-size:10.5pt}
+.cal-sumbar .in b{color:var(--accent)}
+.cal-wrap{background:var(--surface);border:1px solid var(--line);padding:14px 16px 16px;margin:0 0 13px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.cal-head b{font-size:11.5pt;color:var(--ink);letter-spacing:.02em}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{background:var(--field);color:var(--ink);border:1px solid var(--line);padding:4px 11px;
+      font:inherit;font-size:9pt;cursor:pointer}
+.cal-nav button:hover{border-color:var(--accent);color:var(--accent)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.cal-dow{background:var(--field);color:var(--muted);font-size:8pt;text-align:center;padding:5px 0;letter-spacing:.05em}
+.cal-cell{background:var(--surface);min-height:70px;padding:4px 5px 5px}
+.cal-cell.pad{background:var(--bg)}
+.cal-cell.today .cal-daynum{color:var(--btn-ink);background:var(--accent);padding:0 5px}
+.cal-daynum{display:inline-block;color:var(--muted);font-size:8pt;margin-bottom:3px}
+.cal-item{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:7.3pt;
+      padding:1px 4px;margin-bottom:1px;line-height:1.5}
+.cal-item.in{background:rgba(217,160,94,.16);color:var(--accent)}
+.cal-item.out{background:rgba(245,242,236,.09);color:var(--ink)}
+.cal-item.transfer{color:var(--muted);font-style:italic;opacity:.75}
+.cal-item.info{color:var(--muted);opacity:.5;font-style:italic}
+.cal-legend{display:flex;gap:16px;font-size:8pt;color:var(--muted);margin-top:11px;flex-wrap:wrap}
+.cal-legend i{font-style:normal;display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px}
+.cal-legend .lin i{background:var(--accent)}
+.cal-legend .lout i{background:var(--ink)}
+.cal-legend .ltr i{background:var(--muted);opacity:.6}
+@media(max-width:600px){.cal-cell{min-height:50px}.cal-item{font-size:6.6pt}.cal-daynum{font-size:7pt}}
 </style>
 <div class="app">
 <aside>
@@ -107,10 +138,11 @@ a.lnk{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(217,
     <a class="cell" href="#/output" data-s="output"><span class="ic">🔄</span><span class="lb">시간 → 무엇이 됐나</span><span class="dot"></span></a>
   </div></div></div>
 
-  <div class="grp"><button class="gt" data-g="2"><span>돈</span><span class="cnt">2</span><span class="car">▾</span></button>
+  <div class="grp"><button class="gt" data-g="2"><span>돈</span><span class="cnt">3</span><span class="car">▾</span></button>
   <div class="gc" id="gc2"><div class="inner">
     <a class="cell" href="#/money-in" data-s="money-in"><span class="ic">💰</span><span class="lb">들어온 돈</span><span class="dot"></span></a>
     <a class="cell" href="#/money-out" data-s="money-out"><span class="ic">💸</span><span class="lb">나간 돈</span><span class="dot"></span></a>
+    <a class="cell" href="#/cal" data-s="cal"><span class="ic">📅</span><span class="lb">가계부 달력</span><span class="dot"></span><span class="pill new">추가한 칸</span></a>
   </div></div></div>
 
   <div class="grp"><button class="gt" data-g="3"><span>배움</span><span class="cnt">2</span><span class="car">▾</span></button>
@@ -178,6 +210,7 @@ a.lnk{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(217,
 <tr><td>시간</td><td class="c">시간 집계</td><td class="c">채움 — 모르는 시간 57%</td></tr>
 <tr><td>시간</td><td class="c">시간 → 무엇이 됐나</td><td class="c">채움</td></tr>
 <tr><td>돈</td><td class="c">들어온 돈 · 나간 돈</td><td class="c">채움 — 8월 기준</td></tr>
+<tr><td>돈</td><td class="c">가계부 달력 <b>(내가 추가)</b></td><td class="c">채움 — 고정비는 자동 반복, 날짜 추정분은 확인 필요</td></tr>
 <tr><td>배움</td><td class="c">훈련 진도</td><td class="c">채움</td></tr>
 <tr><td>배움</td><td class="c">자격 시험</td><td class="c fill">아직 — 큐넷 확인 필요</td></tr>
 <tr><td>만든 것</td><td class="c">작품 기록 <b>(내가 추가)</b></td><td class="c fill">아직</td></tr>
@@ -258,6 +291,31 @@ a.lnk{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(217,
 <div class="src"><b>어디서 오나</b> · 카드·통장 앱 · 월 1회 수기 · 고정지출은 재정계획 PDF</div>
 <div class="note">★<b>「자산」과 「비용」과 「부채상환」을 나누십시오.</b> 엄마에게 갚은 70만원은 쓴 돈이 아니라 <b>빚이 줄어든 것</b>입니다 — 「이번 달에 70만원 썼다」로 보면 안 됩니다.<br><br>재정계획상 <b>한 달 고정비는 약 15만원, 실사용가능금액은 17만원</b>입니다. 이번 달은 대출·상환·훈련비 때문에 이 틀 밖의 돈이 크게 움직였습니다.</div>
 <div class="note warn">⚠ <b>불필요 지출 절대엄금</b> — 재정계획 PDF의 마지막 문장입니다. 대출로 여유가 생겼다고 이 원칙이 풀리는 것은 아닙니다.</div>
+</section>
+
+<section class="scr" data-cell="cal">
+<div class="ch"><h2>📅 가계부 달력</h2><span class="pill new">추가한 칸</span></div>
+<p class="what">하루 단위로 입출금을 본다. <b>내 계좌끼리 옮긴 돈은 지출·수입에서 뺀다.</b></p>
+
+<div class="cal-sumbar" id="calSumbar"></div>
+
+<div class="cal-wrap">
+  <div class="cal-head">
+    <div class="cal-nav"><button id="calPrev" type="button">‹ 이전 달</button></div>
+    <b id="calTitle"></b>
+    <div class="cal-nav"><button id="calNext" type="button">다음 달 ›</button></div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div class="cal-legend">
+    <span class="lin"><i></i>들어옴</span>
+    <span class="lout"><i></i>나감</span>
+    <span class="ltr"><i></i>내 계좌 간 이체 · 참고용 (지출 제외)</span>
+  </div>
+</div>
+
+<div class="src"><b>어디서 오나</b> · 통장 앱 보고 직접 입력 · 매달 고정비는 자동 반복</div>
+<div class="note">★<b>이체는 지출이 아닙니다.</b> 토스뱅크에서 국민은행으로 옮긴 돈은 「나갔다」가 아니라 「자리를 옮겼다」입니다 — 위 합계에서 빼고, 달력에는 회색 글씨로만 남깁니다.<br><br>보험료처럼 <b>엄마가 대신 내는 돈</b>도 내 지출이 아니라서 회색으로 참고만 표시합니다.</div>
+<div class="note warn">⚠ 15·17·18·20·24일 고정비는 실제 출금일로, 나머지(교통비·헌금·십일조·상비금)는 <b>날짜를 추정</b>해 1일에 넣어뒀습니다 — 통장 보고 정확한 날짜로 고쳐 주세요.</div>
 </section>
 
 <section class="scr" data-cell="progress">
@@ -435,4 +493,73 @@ document.querySelectorAll('.gt').forEach(function(b){b.addEventListener('click',
  var gc=document.getElementById('gc'+b.dataset.g);var cl=gc.classList.toggle('closed');
  b.classList.toggle('closed',cl);gc.style.maxHeight=cl?'0px':'';});});
 show((location.hash||'').replace(/^#\/?/,''));
+
+/* 가계부 달력 — 이체·타인부담은 지출에서 제외 */
+var TRANSACTIONS=[
+ /* 매달 반복 (day = 매달 그 날짜) */
+ {day:15,type:"out",amount:990,what:"톡서랍",recur:true},
+ {day:17,type:"out",amount:14000,what:"배민클럽+유튜브 프리미엄",recur:true},
+ {day:17,type:"in",amount:300000,what:"엄마 용돈",recur:true},
+ {day:18,type:"out",amount:12400,what:"쿠팡 스포츠패스",recur:true},
+ {day:20,type:"out",amount:38000,what:"통신료",recur:true},
+ {day:20,type:"out",amount:8000,what:"쿠팡 와우",recur:true},
+ {day:24,type:"out",amount:11000,what:"아이클라우드",recur:true},
+ {day:1,type:"out",amount:30000,what:"교통비 (날짜 추정)",recur:true},
+ {day:1,type:"out",amount:20000,what:"헌금 (날짜 추정)",recur:true},
+ {day:1,type:"out",amount:30000,what:"십일조 (날짜 추정)",recur:true},
+ {day:1,type:"info",amount:15000,what:"보험료 — 엄마 부담 (날짜 추정)",recur:true},
+ {day:1,type:"transfer",amount:120000,what:"토스뱅크 상비금 적립 (날짜 추정)",recur:true},
+ /* 일회성 */
+ {date:"2026-08-25",type:"in",amount:1500000,what:"장학재단 생활비 대출"},
+ {date:"2026-08-25",type:"out",amount:193100,what:"훈련신청비"},
+ {date:"2026-08-25",type:"out",amount:700000,what:"엄마에게 상환"}
+];
+var calYear=2026, calMonth=7; /* 0-indexed: 7=8월 */
+function fmtWon(n){return n.toLocaleString('ko-KR')+'원';}
+function pad2(n){return (n<10?'0':'')+n;}
+function dayTx(y,m,d){
+ var dateStr=y+'-'+pad2(m+1)+'-'+pad2(d), out=[];
+ TRANSACTIONS.forEach(function(t){
+  if(t.recur && t.day===d) out.push(t);
+  else if(!t.recur && t.date===dateStr) out.push(t);
+ });
+ return out;
+}
+function renderCal(){
+ var grid=document.getElementById('calGrid');
+ if(!grid) return;
+ var title=document.getElementById('calTitle'), sumbar=document.getElementById('calSumbar');
+ var y=calYear, m=calMonth;
+ title.textContent=y+'년 '+(m+1)+'월';
+ var startDow=new Date(y,m,1).getDay();
+ var daysInMonth=new Date(y,m+1,0).getDate();
+ var dowNames=['일','월','화','수','목','금','토'];
+ var html=''; dowNames.forEach(function(n){html+='<div class="cal-dow">'+n+'</div>';});
+ for(var i=0;i<startDow;i++) html+='<div class="cal-cell pad"></div>';
+ var todayStr=new Date().toISOString().slice(0,10);
+ var sumIn=0,sumOut=0,sumTransfer=0;
+ for(var d=1;d<=daysInMonth;d++){
+  var txs=dayTx(y,m,d);
+  var isToday=(y+'-'+pad2(m+1)+'-'+pad2(d))===todayStr;
+  var cellHtml='<div class="cal-daynum">'+d+'</div>';
+  txs.forEach(function(t){
+   if(t.type==='in') sumIn+=t.amount;
+   else if(t.type==='out') sumOut+=t.amount;
+   else if(t.type==='transfer') sumTransfer+=t.amount;
+   var sign=t.type==='in'?'+':(t.type==='out'?'-':'');
+   cellHtml+='<span class="cal-item '+t.type+'">'+sign+fmtWon(t.amount)+' '+t.what+'</span>';
+  });
+  html+='<div class="cal-cell'+(isToday?' today':'')+'">'+cellHtml+'</div>';
+ }
+ grid.innerHTML=html;
+ sumbar.innerHTML=
+  '<span class="in">이번 달 들어옴 <b>'+fmtWon(sumIn)+'</b></span>'+
+  '<span>이번 달 나감 <b>'+fmtWon(sumOut)+'</b></span>'+
+  '<span>내 계좌 간 이체 <b>'+fmtWon(sumTransfer)+'</b> (지출 제외)</span>'+
+  '<span>순증감 <b>'+(sumIn-sumOut>=0?'+':'')+fmtWon(sumIn-sumOut)+'</b></span>';
+}
+var calPrevBtn=document.getElementById('calPrev'), calNextBtn=document.getElementById('calNext');
+if(calPrevBtn) calPrevBtn.addEventListener('click',function(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();});
+if(calNextBtn) calNextBtn.addEventListener('click',function(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();});
+renderCal();
 </script>
