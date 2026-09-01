@@ -230,9 +230,9 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <div class="dash-grid">
   <div class="dash-card">
-    <div class="k">모르는 시간</div>
-    <div class="v"><b>67h 35m</b></div>
-    <div class="d">이번 주 · 깨어있는 시간의 57%</div>
+    <div class="k">모르는 시간 · 라이브</div>
+    <div class="v"><b id="dashUnknownWeek" style="font-variant-numeric:tabular-nums">-</b></div>
+    <div class="d">이번 주 누적 · <span id="dashUnknownPct">-</span></div>
   </div>
   <div class="dash-card">
     <div class="k">계좌 합계 (9/1)</div>
@@ -277,7 +277,7 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <tr><td>나</td><td class="c">요약 · 내 지도</td><td class="c">채움</td></tr>
 <tr><td>일정</td><td class="c">구글 캘린더</td><td class="c">연동됨</td></tr>
 <tr><td>일정</td><td class="c">챙길 날짜</td><td class="c fill">아직</td></tr>
-<tr><td>시간</td><td class="c">시간 집계</td><td class="c">채움 — 모르는 시간 57%</td></tr>
+<tr><td>시간</td><td class="c">시간 집계</td><td class="c">채움 — 라이브(초 단위 실시간 누적)</td></tr>
 <tr><td>시간</td><td class="c">시간 → 무엇이 됐나</td><td class="c">채움</td></tr>
 <tr><td>돈</td><td class="c">들어온 돈 · 나간 돈</td><td class="c">채움 — 8월 기준</td></tr>
 <tr><td>돈</td><td class="c">가계부 달력</td><td class="c">채움 — 고정비 자동 반복, 추정분 확인 필요</td></tr>
@@ -315,16 +315,58 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <!-- ── 시간 집계 ──────────────────────── -->
 <section class="scr" data-cell="time">
-<div class="ch"><h2>⏱️ 시간 집계</h2></div>
-<p class="cap">기상 07:00 · 취침 24:00 → 깨어있는 시간 하루 17시간 × 7일 = <b>119시간</b> · 훈련 09:00~17:20 평일 5일 기준</p>
+<div class="ch"><h2>⏱️ 시간 집계 · 라이브</h2></div>
+<p class="cap">기상 07:00 · 취침 24:00 기준, 아래 주간 일정표대로 초 단위로 실시간 누적됩니다.</p>
+
+<div class="dash-grid">
+  <div class="dash-card">
+    <div class="k">훈련 · 오늘</div>
+    <div class="v" id="liveTrainToday" style="font-variant-numeric:tabular-nums">00:00:00</div>
+    <div class="d" id="liveTrainStatus">-</div>
+  </div>
+  <div class="dash-card">
+    <div class="k">운동 · 오늘</div>
+    <div class="v" id="liveExerciseToday" style="font-variant-numeric:tabular-nums">00:00:00</div>
+    <div class="d" id="liveExerciseStatus">-</div>
+  </div>
+  <div class="dash-card">
+    <div class="k">독서 · 오늘</div>
+    <div class="v" id="liveReadingToday" style="font-variant-numeric:tabular-nums">00:00:00</div>
+    <div class="d" id="liveReadingStatus">-</div>
+  </div>
+  <div class="dash-card">
+    <div class="k">모르는 시간 · 이번 주 누적</div>
+    <div class="v"><b id="liveUnknownWeek" style="font-variant-numeric:tabular-nums">-</b></div>
+    <div class="d">실시간 · 매초 갱신</div>
+  </div>
+</div>
+
+<div class="dash-h">오늘 일정</div>
+<ul class="watch" id="todayBlocks"></ul>
+
+<div class="dash-h">이번 주 누적 (월요일부터 지금까지)</div>
 <table>
-<tr><th>영역</th><th class="c">이번 주</th><th class="c">비중</th></tr>
-<tr><td>훈련</td><td class="c">41시간 20분</td><td class="c">35%</td></tr>
-<tr><td>운동</td><td class="c">8시간 45분 <span class="fill">(매일 1~1.5시간 평균)</span></td><td class="c">7%</td></tr>
-<tr><td>독서</td><td class="c">1시간 <span class="fill">(30분 × 주 2회 추정)</span></td><td class="c">1%</td></tr>
-<tr><td><b>모르는 시간 (미분류)</b></td><td class="c"><b>67시간 35분</b></td><td class="c"><b>57%</b></td></tr>
-<tr class="sum"><td>깨어 있던 시간 합계</td><td>119시간</td><td class="c">100%</td></tr>
+<tr><th>영역</th><th class="c">누적</th><th class="c">비중</th></tr>
+<tr><td>훈련</td><td class="c" id="wkTrain" style="font-variant-numeric:tabular-nums">-</td><td class="c" id="pctTrain">-</td></tr>
+<tr><td>운동</td><td class="c" id="wkExercise" style="font-variant-numeric:tabular-nums">-</td><td class="c" id="pctExercise">-</td></tr>
+<tr><td>독서</td><td class="c" id="wkReading" style="font-variant-numeric:tabular-nums">-</td><td class="c" id="pctReading">-</td></tr>
+<tr><td><b>모르는 시간</b></td><td class="c" id="wkUnknown" style="font-variant-numeric:tabular-nums"><b>-</b></td><td class="c" id="pctUnknown"><b>-</b></td></tr>
+<tr class="sum"><td>깨어 있던 시간 (누적)</td><td id="wkAwake" style="font-variant-numeric:tabular-nums">-</td><td class="c">100%</td></tr>
 </table>
+<p class="cap">주 초반에는 깨어있는 시간 자체가 적어서 비중(%)이 크게 출렁여요 — 주말로 갈수록 안정됩니다.</p>
+
+<div class="dash-h">주간 일정표 (가정)</div>
+<table>
+<tr><th>요일</th><th class="c">훈련</th><th class="c">운동</th><th class="c">독서</th></tr>
+<tr><td>월</td><td class="c">09:00–17:20</td><td class="c">18:00–19:00</td><td class="c">19:00–19:30</td></tr>
+<tr><td>화</td><td class="c">09:00–17:20 + 18:00–21:00 (야간반)</td><td class="c">—</td><td class="c">21:00–21:30</td></tr>
+<tr><td>수</td><td class="c">09:00–17:20</td><td class="c">18:00–19:00</td><td class="c">19:00–19:30</td></tr>
+<tr><td>목</td><td class="c">09:00–17:20 + 18:00–21:00 (야간반)</td><td class="c">—</td><td class="c">21:00–21:30</td></tr>
+<tr><td>금</td><td class="c">09:00–17:20</td><td class="c">18:00–19:00</td><td class="c">19:00–19:30</td></tr>
+<tr><td>토</td><td class="c">—</td><td class="c">—</td><td class="c">20:00–20:30</td></tr>
+<tr><td>일</td><td class="c">—</td><td class="c">—</td><td class="c">20:00–20:30</td></tr>
+</table>
+<p class="cap">화·목 야간반(18–21시)은 곧 시작하는 건축목공기능사 실기 대비반 기준으로 미리 넣어뒀어요 — 시작 전이면 그만큼 과다 집계되니 실제 시작일 알려주면 그날부터 켜지게 고칠게요. 독서 30분은 그날 다른 일정이 끝난 뒤로 임의 배치 — 정확한 시간 알려주면 바꿀게요.</p>
 </section>
 
 <!-- ── 시간 → 무엇이 됐나 ─────────────── -->
@@ -810,4 +852,147 @@ if(pfSaveBtn) pfSaveBtn.addEventListener('click', function(){
   });
 });
 pfRefresh();
+
+/* ── 시간 집계 라이브 엔진 ──────────────────────────────────
+   dow: 0=일 1=월 2=화 3=수 4=목 5=금 6=토 */
+var SCHEDULE = [
+ {dow:1,cat:'train',s:'09:00',e:'17:20'},
+ {dow:2,cat:'train',s:'09:00',e:'17:20'},
+ {dow:3,cat:'train',s:'09:00',e:'17:20'},
+ {dow:4,cat:'train',s:'09:00',e:'17:20'},
+ {dow:5,cat:'train',s:'09:00',e:'17:20'},
+ {dow:2,cat:'train',s:'18:00',e:'21:00'},   /* 화 야간반(자격시험 대비) */
+ {dow:4,cat:'train',s:'18:00',e:'21:00'},   /* 목 야간반(자격시험 대비) */
+ {dow:1,cat:'exercise',s:'18:00',e:'19:00'},
+ {dow:3,cat:'exercise',s:'18:00',e:'19:00'},
+ {dow:5,cat:'exercise',s:'18:00',e:'19:00'},
+ {dow:1,cat:'reading',s:'19:00',e:'19:30'},
+ {dow:2,cat:'reading',s:'21:00',e:'21:30'},
+ {dow:3,cat:'reading',s:'19:00',e:'19:30'},
+ {dow:4,cat:'reading',s:'21:00',e:'21:30'},
+ {dow:5,cat:'reading',s:'19:00',e:'19:30'},
+ {dow:6,cat:'reading',s:'20:00',e:'20:30'},
+ {dow:0,cat:'reading',s:'20:00',e:'20:30'}
+];
+var CAT_LABEL = {train:'훈련',exercise:'운동',reading:'독서'};
+var AWAKE_START = 7*3600, AWAKE_END = 24*3600;
+
+function capName(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function timeToSec(hhmm){ var p=hhmm.split(':'); return (+p[0])*3600+(+p[1])*60; }
+function todaySeconds(d){ return d.getHours()*3600+d.getMinutes()*60+d.getSeconds(); }
+function mondayOf(d){
+ var day=d.getDay(), diff=(day===0?-6:1-day);
+ var mon=new Date(d.getFullYear(),d.getMonth(),d.getDate()+diff);
+ mon.setHours(0,0,0,0); return mon;
+}
+function fmtDur(totalSec){
+ totalSec=Math.max(0,Math.round(totalSec));
+ var h=Math.floor(totalSec/3600), m=Math.floor((totalSec%3600)/60), s=totalSec%60;
+ return h+'시간 '+pad2(m)+'분 '+pad2(s)+'초';
+}
+function fmtClock(totalSec){
+ totalSec=Math.max(0,Math.round(totalSec));
+ var h=Math.floor(totalSec/3600), m=Math.floor((totalSec%3600)/60), s=totalSec%60;
+ return pad2(h)+':'+pad2(m)+':'+pad2(s);
+}
+function pctOf(part,whole){ return whole>0 ? Math.round(part/whole*100) : 0; }
+
+function computeLive(){
+ var now=new Date(), nowSec=todaySeconds(now), todayDow=now.getDay();
+ var monday=mondayOf(now);
+ var todayMidnight=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ var weekTotals={train:0,exercise:0,reading:0}, weekAwake=0;
+
+ for(var i=0;i<=6;i++){
+  var dayDate=new Date(monday.getFullYear(),monday.getMonth(),monday.getDate()+i);
+  if(dayDate>todayMidnight) break;
+  var isToday=(dayDate.getTime()===todayMidnight.getTime());
+  var isPast=(dayDate.getTime()<todayMidnight.getTime());
+  var dow=dayDate.getDay();
+
+  if(isPast) weekAwake += (AWAKE_END-AWAKE_START);
+  else if(isToday) weekAwake += Math.max(0, Math.min(nowSec,AWAKE_END)-AWAKE_START);
+
+  SCHEDULE.forEach(function(b){
+   if(b.dow!==dow) return;
+   var s=timeToSec(b.s), e=timeToSec(b.e), elapsed;
+   if(isPast) elapsed=e-s;
+   else if(isToday) elapsed=Math.max(0,Math.min(nowSec,e)-s);
+   else elapsed=0;
+   weekTotals[b.cat]+=elapsed;
+  });
+ }
+
+ var trackedSum=weekTotals.train+weekTotals.exercise+weekTotals.reading;
+ var unknown=Math.max(0, weekAwake-trackedSum);
+
+ var todayInfo={};
+ ['train','exercise','reading'].forEach(function(cat){ todayInfo[cat]={elapsed:0,status:'오늘 일정 없음',blocks:[]}; });
+ SCHEDULE.forEach(function(b){
+  if(b.dow!==todayDow) return;
+  var s=timeToSec(b.s), e=timeToSec(b.e);
+  todayInfo[b.cat].blocks.push(b);
+  todayInfo[b.cat].elapsed += Math.max(0,Math.min(nowSec,e)-s);
+ });
+ ['train','exercise','reading'].forEach(function(cat){
+  var info=todayInfo[cat];
+  if(info.blocks.length===0) return;
+  var anyActive=false, allDone=true, nextStart=null;
+  info.blocks.forEach(function(b){
+   var s=timeToSec(b.s), e=timeToSec(b.e);
+   if(nowSec>=s && nowSec<e) anyActive=true;
+   if(nowSec<e) allDone=false;
+   if(nowSec<s && (nextStart===null||s<nextStart)) nextStart=s;
+  });
+  if(anyActive) info.status='진행 중';
+  else if(allDone) info.status='오늘 완료';
+  else if(nextStart!==null) info.status=Math.ceil((nextStart-nowSec)/60)+'분 후 시작';
+ });
+
+ return {weekTotals:weekTotals, weekAwake:weekAwake, unknown:unknown, todayInfo:todayInfo};
+}
+
+function tickLive(){
+ var r = computeLive();
+ ['train','exercise','reading'].forEach(function(cat){
+  var name=capName(cat);
+  var elToday=document.getElementById('live'+name+'Today');
+  var elStatus=document.getElementById('live'+name+'Status');
+  if(elToday) elToday.textContent = fmtClock(r.todayInfo[cat].elapsed);
+  if(elStatus) elStatus.textContent = r.todayInfo[cat].status;
+  var wkEl=document.getElementById('wk'+name);
+  if(wkEl) wkEl.textContent = fmtDur(r.weekTotals[cat]);
+  var pctEl=document.getElementById('pct'+name);
+  if(pctEl) pctEl.textContent = pctOf(r.weekTotals[cat], r.weekAwake)+'%';
+ });
+ var unkWeekEl=document.getElementById('liveUnknownWeek');
+ if(unkWeekEl) unkWeekEl.textContent = fmtDur(r.unknown);
+ var wkUnknownEl=document.getElementById('wkUnknown');
+ if(wkUnknownEl) wkUnknownEl.innerHTML = '<b>'+fmtDur(r.unknown)+'</b>';
+ var pctUnknownEl=document.getElementById('pctUnknown');
+ if(pctUnknownEl) pctUnknownEl.innerHTML = '<b>'+pctOf(r.unknown,r.weekAwake)+'%</b>';
+ var wkAwakeEl=document.getElementById('wkAwake');
+ if(wkAwakeEl) wkAwakeEl.textContent = fmtDur(r.weekAwake);
+
+ var dashUnkEl=document.getElementById('dashUnknownWeek');
+ if(dashUnkEl) dashUnkEl.textContent = fmtDur(r.unknown);
+ var dashPctEl=document.getElementById('dashUnknownPct');
+ if(dashPctEl) dashPctEl.textContent = pctOf(r.unknown,r.weekAwake)+'%';
+
+ var listEl=document.getElementById('todayBlocks');
+ if(listEl){
+  var now=new Date(), todayDow=now.getDay();
+  var items=SCHEDULE.filter(function(b){return b.dow===todayDow;});
+  if(items.length===0){
+   listEl.innerHTML='<li>오늘은 예정된 일정이 없습니다.</li>';
+  } else {
+   listEl.innerHTML=items.map(function(b){
+    var info=r.todayInfo[b.cat];
+    return '<li>'+CAT_LABEL[b.cat]+' '+b.s+'–'+b.e+'<div class="why">'+info.status+'</div></li>';
+   }).join('');
+  }
+ }
+}
+tickLive();
+setInterval(tickLive, 1000);
 </script>
