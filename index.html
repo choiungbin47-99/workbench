@@ -178,11 +178,12 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
     <a class="cell" href="#/output" data-s="output"><span class="ic">🔄</span><span class="lb">시간 → 무엇이 됐나</span><span class="dot"></span></a>
   </div></div></div>
 
-  <div class="grp"><button class="gt" data-g="3"><span>돈</span><span class="cnt">3</span><span class="car">▾</span></button>
+  <div class="grp"><button class="gt" data-g="3"><span>돈</span><span class="cnt">4</span><span class="car">▾</span></button>
   <div class="gc" id="gc3"><div class="inner">
     <a class="cell" href="#/money-in" data-s="money-in"><span class="ic">💰</span><span class="lb">들어온 돈</span><span class="dot"></span></a>
     <a class="cell" href="#/money-out" data-s="money-out"><span class="ic">💸</span><span class="lb">나간 돈</span><span class="dot"></span></a>
     <a class="cell" href="#/cal" data-s="cal"><span class="ic">📅</span><span class="lb">가계부 달력</span><span class="dot"></span></a>
+    <a class="cell" href="#/ledger-input" data-s="ledger-input"><span class="ic">💳</span><span class="lb">거래 입력</span><span class="dot no"></span></a>
   </div></div></div>
 
   <div class="grp"><button class="gt" data-g="4"><span>배움</span><span class="cnt">2</span><span class="car">▾</span></button>
@@ -468,6 +469,52 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 </div>
 </section>
 
+<!-- ── 거래 입력 ──────────────────────── -->
+<section class="scr" data-cell="ledger-input">
+<div class="ch"><h2>💳 거래 입력</h2></div>
+<p class="sb-status" id="ledgerStatus">서버베이스 연결 확인 중…</p>
+
+<div class="field-row"><label>날짜</label><input id="ldDate" class="inp" type="date"></div>
+<div class="field-row"><label>종류</label>
+  <select id="ldType" class="inp">
+    <option value="out">지출</option>
+    <option value="in">수입</option>
+    <option value="transfer">계좌 간 이체</option>
+  </select>
+</div>
+<div class="field-row"><label>금액(원)</label><input id="ldAmount" class="inp" type="number" min="0"></div>
+<div class="field-row"><label>내용</label><input id="ldWhat" class="inp" placeholder="예: 스타벅스, 교통비"></div>
+
+<div id="ldAccountRow" class="field-row"><label>계좌</label>
+  <select id="ldAccount" class="inp">
+    <option value="국민">국민계좌</option>
+    <option value="토스체크">토스체크</option>
+    <option value="토스저축">토스저축</option>
+  </select>
+</div>
+<div id="ldXferRow" style="display:none">
+  <div class="field-row"><label>어디서 (from)</label>
+    <select id="ldFrom" class="inp">
+      <option value="국민">국민계좌</option>
+      <option value="토스체크">토스체크</option>
+      <option value="토스저축">토스저축</option>
+    </select>
+  </div>
+  <div class="field-row"><label>어디로 (to)</label>
+    <select id="ldTo" class="inp">
+      <option value="국민">국민계좌</option>
+      <option value="토스체크" selected>토스체크</option>
+      <option value="토스저축">토스저축</option>
+    </select>
+  </div>
+</div>
+
+<button class="btn" id="ldSave" type="button">저장</button>
+
+<div class="dash-h">최근 입력</div>
+<ul class="watch" id="ldRecent"></ul>
+</section>
+
 <!-- ── 훈련 진도 ──────────────────────── -->
 <section class="scr" data-cell="progress">
 <div class="ch"><h2>📚 훈련 진도</h2></div>
@@ -561,10 +608,35 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <section class="scr" data-cell="study">
 <div class="ch"><h2>📓 공부방</h2></div>
 <p class="sb-status" id="studyStatus">서버베이스 연결 확인 중…</p>
-<textarea id="studyInput" class="inp" rows="4" placeholder="오늘 공부한 것을 적으세요"></textarea>
+
+<div class="dash-grid">
+  <div class="dash-card"><div class="k">이번 주 학습시간</div><div class="v" id="studyWeekMin">-</div><div class="d">기록 <span id="studyWeekCount">-</span>건</div></div>
+  <div class="dash-card"><div class="k">총 기록</div><div class="v" id="studyTotalCount">-</div><div class="d">전체 누적</div></div>
+  <div class="dash-card"><div class="k">복습 대기</div><div class="v"><b id="studyPendingCount">-</b></div><div class="d">아직 복습 안 한 것</div></div>
+</div>
+
+<div class="field-row"><label>날짜</label><input id="stDate" class="inp" type="date"></div>
+<div class="field-row"><label>주제 / 과목</label><input id="stSubject" class="inp" placeholder="예: 건축목공기능사 필기 - 재료역학"></div>
+<div class="field-row"><label>학습시간(분)</label><input id="stMinutes" class="inp" type="number" min="0" placeholder="예: 45"></div>
+<div class="field-row"><label>이해도</label>
+  <select id="stDifficulty" class="inp">
+    <option value="잘 이해함">잘 이해함</option>
+    <option value="애매함">애매함</option>
+    <option value="모르겠음">모르겠음</option>
+  </select>
+</div>
+<div class="field-row"><label>내용 · 메모</label><textarea id="stContent" class="inp" rows="3" placeholder="오늘 공부한 내용"></textarea></div>
+<div class="field-row"><label>다음에 복습할 것 (선택)</label><input id="stReview" class="inp" placeholder="비워두면 복습 대기 목록에 안 뜸"></div>
 <button class="btn" id="studySave" type="button">저장</button>
-<div class="dash-h">지난 기록</div>
-<ul class="watch" id="studyList"></ul>
+
+<div class="dash-h">복습 대기</div>
+<ul class="watch" id="studyPending"></ul>
+
+<div class="dash-h">전체 기록</div>
+<table>
+<thead><tr><th>날짜</th><th class="c">주제</th><th class="c">시간</th><th class="c">이해도</th></tr></thead>
+<tbody id="studyList"></tbody>
+</table>
 </section>
 
 <!-- ── 마케팅 대시보드 (서버베이스) ───── -->
@@ -692,7 +764,7 @@ function fmtWon(n){return n.toLocaleString('ko-KR')+'원';}
 function pad2(n){return (n<10?'0':'')+n;}
 function dayTx(y,m,d,daysInMonth){
  var dateStr=y+'-'+pad2(m+1)+'-'+pad2(d), out=[];
- TRANSACTIONS.forEach(function(t){
+ TRANSACTIONS.concat(LEDGER_ROWS||[]).forEach(function(t){
   if(t.recur && t.day===d) out.push(t);
   else if(t.recur && t.lastDay && d===daysInMonth) out.push(t);
   else if(t.recur && t.weekly && new Date(y,m,d).getDay()===t.dow) out.push(t);
@@ -813,31 +885,74 @@ if (!sb) {
   });
 }
 
-/* 공부방 — study_notes(content) */
+/* 공부방 — study_notes(subject,minutes,difficulty,content,review_note,reviewed) */
+var stDateEl = document.getElementById('stDate');
+if(stDateEl) stDateEl.value = new Date().toISOString().slice(0,10);
+
 function studyRefresh(){
   if(!sb) return;
-  sb.from('study_notes').select('*').order('created_at',{ascending:false}).limit(30).then(function(res){
+  sb.from('study_notes').select('*').order('created_at',{ascending:false}).limit(200).then(function(res){
     if(res.error){ setStatus('studyStatus','불러오기 오류: '+res.error.message,'err'); return; }
-    setStatus('studyStatus','연결됨 · '+res.data.length+'개 기록','ok');
-    var list = document.getElementById('studyList'); list.innerHTML='';
-    res.data.forEach(function(row){
-      var li=document.createElement('li');
-      li.innerHTML = '<div>'+esc(row.content)+'</div><div class="why">'+fmtDT(row.created_at)+'</div>';
-      list.appendChild(li);
+    var rows = res.data || [];
+    setStatus('studyStatus','연결됨 · '+rows.length+'개 기록','ok');
+
+    var monday = mondayOf(new Date());
+    var weekMin=0, weekCount=0;
+    rows.forEach(function(row){
+      var created = new Date(row.created_at);
+      if(created>=monday){ weekMin += (row.minutes||0); weekCount++; }
     });
+    var elWM=document.getElementById('studyWeekMin'); if(elWM) elWM.textContent = weekMin+'분';
+    var elWC=document.getElementById('studyWeekCount'); if(elWC) elWC.textContent = weekCount;
+    var elTC=document.getElementById('studyTotalCount'); if(elTC) elTC.textContent = rows.length;
+
+    var pending = rows.filter(function(r){ return r.review_note && !r.reviewed; });
+    var elPC=document.getElementById('studyPendingCount'); if(elPC) elPC.textContent = pending.length;
+    var pendingEl = document.getElementById('studyPending');
+    if(pendingEl){
+      if(pending.length===0){
+        pendingEl.innerHTML = '<li>복습 대기 없음</li>';
+      } else {
+        pendingEl.innerHTML = pending.map(function(r){
+          return '<li>'+esc(r.subject||'(주제 없음)')+' — '+esc(r.review_note)+
+                 '<div class="why">'+fmtDT(r.created_at)+' · <a class="lnk" href="javascript:void(0)" data-review-id="'+r.id+'">복습 완료로 표시</a></div></li>';
+        }).join('');
+        pendingEl.querySelectorAll('[data-review-id]').forEach(function(a){
+          a.addEventListener('click', function(){
+            var id = a.getAttribute('data-review-id');
+            sb.from('study_notes').update({reviewed:true}).eq('id', id).then(function(){ studyRefresh(); });
+          });
+        });
+      }
+    }
+
+    var list = document.getElementById('studyList');
+    if(list){
+      list.innerHTML = rows.map(function(row){
+        return '<tr><td>'+fmtDT(row.created_at)+'</td><td class="c">'+esc(row.subject||'—')+
+               '</td><td class="c">'+(row.minutes||0)+'분</td><td class="c">'+esc(row.difficulty||'—')+'</td></tr>'+
+               (row.content ? '<tr><td colspan="4" style="color:var(--muted);font-size:8.5pt;padding-top:0">'+esc(row.content)+'</td></tr>' : '');
+      }).join('');
+    }
   });
 }
 var studySaveBtn = document.getElementById('studySave');
 if(studySaveBtn) studySaveBtn.addEventListener('click', function(){
   if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
-  var input = document.getElementById('studyInput');
-  var val = input.value.trim();
-  if(!val) return;
+  var subject = document.getElementById('stSubject').value.trim();
+  var minutes = Number(document.getElementById('stMinutes').value) || 0;
+  var difficulty = document.getElementById('stDifficulty').value;
+  var content = document.getElementById('stContent').value.trim();
+  var review = document.getElementById('stReview').value.trim();
+  if(!subject && !content){ alert('주제나 내용 중 하나는 적어주세요.'); return; }
   studySaveBtn.disabled = true;
-  sb.from('study_notes').insert({content:val}).then(function(res){
+  sb.from('study_notes').insert({subject:subject, minutes:minutes, difficulty:difficulty, content:content, review_note:review||null, reviewed:false}).then(function(res){
     studySaveBtn.disabled = false;
     if(res.error){ alert('저장 오류: '+res.error.message); return; }
-    input.value='';
+    document.getElementById('stSubject').value='';
+    document.getElementById('stMinutes').value='';
+    document.getElementById('stContent').value='';
+    document.getElementById('stReview').value='';
     studyRefresh();
   });
 });
@@ -918,6 +1033,76 @@ if(pfSaveBtn) pfSaveBtn.addEventListener('click', function(){
   });
 });
 pfRefresh();
+
+/* 거래 입력 — ledger(date,type,amount,what,account,from_account,to_account) */
+var ldDateEl = document.getElementById('ldDate');
+if(ldDateEl) ldDateEl.value = new Date().toISOString().slice(0,10);
+
+var ldTypeEl = document.getElementById('ldType');
+if(ldTypeEl) ldTypeEl.addEventListener('change', function(){
+  var isXfer = ldTypeEl.value === 'transfer';
+  document.getElementById('ldAccountRow').style.display = isXfer ? 'none' : '';
+  document.getElementById('ldXferRow').style.display = isXfer ? '' : 'none';
+});
+
+function ledgerRefresh(){
+  if(!sb) return;
+  sb.from('ledger').select('*').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(20).then(function(res){
+    if(res.error){ setStatus('ledgerStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    setStatus('ledgerStatus','연결됨 · 최근 '+res.data.length+'건 표시','ok');
+    var list = document.getElementById('ldRecent');
+    if(list){
+      list.innerHTML = res.data.map(function(r){
+        var tag = r.type==='transfer' ? (r.from_account+'→'+r.to_account) : (r.account||'');
+        var sign = r.type==='in' ? '+' : (r.type==='out' ? '-' : '');
+        return '<li>'+r.date+' · '+sign+fmtWon(r.amount)+' '+esc(r.what||'')+' ['+tag+']</li>';
+      }).join('') || '<li>아직 입력한 거래가 없습니다.</li>';
+    }
+  });
+}
+var ldSaveBtn = document.getElementById('ldSave');
+if(ldSaveBtn) ldSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var type = document.getElementById('ldType').value;
+  var date = document.getElementById('ldDate').value;
+  var amount = Number(document.getElementById('ldAmount').value);
+  var what = document.getElementById('ldWhat').value.trim();
+  if(!date || !amount){ alert('날짜와 금액을 채워주세요.'); return; }
+  var row = {date:date, type:type, amount:amount, what:what};
+  if(type==='transfer'){
+    row.from_account = document.getElementById('ldFrom').value;
+    row.to_account = document.getElementById('ldTo').value;
+  } else {
+    row.account = document.getElementById('ldAccount').value;
+  }
+  ldSaveBtn.disabled = true;
+  sb.from('ledger').insert(row).then(function(res){
+    ldSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    document.getElementById('ldAmount').value='';
+    document.getElementById('ldWhat').value='';
+    ledgerRefresh();
+    loadLedgerRows(); /* 가계부 달력·잔액 계산에도 즉시 반영 */
+  });
+});
+ledgerRefresh();
+
+/* 서버베이스 ledger 행을 불러와 정적 일정(TRANSACTIONS)과 합쳐서
+   가계부 달력 · 계좌 잔액 계산에 함께 쓴다 */
+var LEDGER_ROWS = [];
+function loadLedgerRows(){
+  if(!sb) return Promise.resolve();
+  return sb.from('ledger').select('*').then(function(res){
+    if(res.error) return;
+    LEDGER_ROWS = (res.data||[]).map(function(r){
+      return {date:r.date, type:r.type, amount:Number(r.amount), what:r.what,
+              account:r.account, from:r.from_account, to:r.to_account, recur:false};
+    });
+    renderCal();
+    updateAcctSnapshot();
+  });
+}
+loadLedgerRows();
 
 /* ── 시간 집계 라이브 엔진 ──────────────────────────────────
    dow: 0=일 1=월 2=화 3=수 4=목 5=금 6=토 */
