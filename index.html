@@ -682,7 +682,8 @@ var TRANSACTIONS=[
  /* 일회성 (지난 달 이력) */
  {date:"2026-08-25",type:"in",amount:1500000,what:"생활비대출 실행",account:"국민"},
  {date:"2026-08-25",type:"out",amount:193100,what:"훈련신청비",account:"국민"},
- {date:"2026-08-25",type:"out",amount:700000,what:"엄마에게 상환",account:"국민"}
+ {date:"2026-08-25",type:"out",amount:700000,what:"엄마에게 상환",account:"국민"},
+ {date:"2026-09-01",type:"out",amount:5000,what:"[테스트] 자동계산 확인용",account:"토스"}
 ];
 var calYear=2026, calMonth=8; /* 0-indexed: 8=9월 */
 function fmtWon(n){return n.toLocaleString('ko-KR')+'원';}
@@ -700,7 +701,7 @@ function dayTx(y,m,d,daysInMonth){
 function computeBalances(){
  var bal={국민:BASELINE.국민, 토스체크:BASELINE.토스체크, 토스저축:BASELINE.토스저축};
  var startY=Number(BASELINE.date.slice(0,4)), startM=Number(BASELINE.date.slice(5,7))-1, startD=Number(BASELINE.date.slice(8,10));
- var cursor=new Date(startY,startM,startD+1);
+ var cursor=new Date(startY,startM,startD); /* 기준일 당일부터 포함 */
  var today=new Date(); today.setHours(0,0,0,0);
  var applied=[];
  while(cursor<=today){
@@ -708,6 +709,7 @@ function computeBalances(){
   var daysInMonth=new Date(y,m+1,0).getDate();
   var dstr=y+'-'+pad2(m+1)+'-'+pad2(d);
   dayTx(y,m,d,daysInMonth).forEach(function(t){
+   if(dstr===BASELINE.date && t.recur) return; /* 기준일 당일 고정비는 스냅샷에 이미 반영됐을 수 있어 건너뜀 — 그날 직접 알려준 일회성 항목만 반영 */
    if(t.type==='transfer'){
     if(t.from && t.to){
      var f=normAcct(t.from), to=normAcct(t.to);
