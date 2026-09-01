@@ -235,9 +235,9 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
     <div class="d">이번 주 · 깨어있는 시간의 57%</div>
   </div>
   <div class="dash-card">
-    <div class="k">8월 잔액</div>
-    <div class="v">633,209원</div>
-    <div class="d">수입 2,271,365 · 지출 1,694,006</div>
+    <div class="k">계좌 합계 (9/1)</div>
+    <div class="v">2,302,636원</div>
+    <div class="d">국민 30만·토스체크 9.7만·토스저축 190.5만</div>
   </div>
   <div class="dash-card">
     <div class="k">훈련 진도</div>
@@ -252,8 +252,8 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <div class="dash-h">이번 주에 볼 것</div>
 <ul class="watch">
-  <li>이번 달 재정계획(월 15만 고정비·여유 17만) 밖에서 <b>대출 150만 + 상환 70만</b> 발생
-    <div class="why">「들어온 돈」·「나간 돈」 — 이번 달은 계획대로 안 굴러간다</div></li>
+  <li>9/17 용돈 입금 전까지 <b>토스체크 66,774원 부족</b> — 토스저축에서 이체 필요
+    <div class="why">국민계좌는 이미 여유 47,110원 — 안 채워도 됨</div></li>
   <li>목공 계산기 앱은 배포됐는데 <b>현장에서 한 번도 안 써 봤다</b>
     <div class="why">「목공 계산기 앱」</div></li>
   <li>홈페이지·인스타·앱·작업대가 <b>서로 연결이 안 돼 있다</b>
@@ -341,14 +341,13 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <!-- ── 들어온 돈 ──────────────────────── -->
 <section class="scr" data-cell="money-in">
 <div class="ch"><h2>💰 들어온 돈</h2></div>
-<p class="cap">지금 잔액 (2026-08-26) · 토스뱅크 607,112원 + 국민 26,097원 = <b>633,209원</b></p>
+<p class="cap" id="acctSnapshot">계좌 스냅샷 (2026-09-01 기준) · 국민계좌 300,000원 · 토스체크 97,226원 · 토스저축 1,905,410원 = <b>2,302,636원</b></p>
 <table>
-<tr><th>무엇</th><th class="c">금액</th><th class="c">언제</th></tr>
-<tr><td>엄마 용돈 (재정계획 고정수입)</td><td class="c">300,000원</td><td class="c">매월 17일 (정기)</td></tr>
-<tr><td>장학재단 생활비 대출</td><td class="c">1,500,000원</td><td class="c">8/25 — <b>부채, 순수입 아님</b></td></tr>
-<tr><td>국민취업지원제도 지원금</td><td class="c fill">— 금액 미정 —</td><td class="c fill">— 시기 미정 —</td></tr>
-<tr><td>훈련장려금</td><td class="c fill">— 금액 미정 —</td><td class="c fill">— 시기 미정 —</td></tr>
-<tr class="sum"><td>8월 누계 수입 (통장 기준)</td><td>2,271,365원</td><td class="c fill">위 대출 포함 추정</td></tr>
+<tr><th>수입원</th><th class="c">금액</th><th class="c">지급 시점</th><th class="c">확정도</th></tr>
+<tr><td>용돈 (엄마)</td><td class="c">320,000원</td><td class="c">매달 17일 (휴일이면 직전 평일)</td><td class="c">확정</td></tr>
+<tr><td>훈련장려금</td><td class="c">200,000원/월</td><td class="c">단위기간 종료 → 다음달 말일</td><td class="c">확정 (출석률 80%↑)</td></tr>
+<tr><td>특별훈련수당 (산대특·수도권)</td><td class="c">100,000원/월</td><td class="c">훈련장려금과 유사 주기</td><td class="c">확정</td></tr>
+<tr><td>구직촉진수당 (국취 1유형)</td><td class="c">600,000원/회 · 최대 6회</td><td class="c">승인 후 개시 — 10월경 예상</td><td class="c fill">승인 절차 진행 중 (신청 8/12)</td></tr>
 </table>
 </section>
 
@@ -356,20 +355,58 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <section class="scr" data-cell="money-out">
 <div class="ch"><h2>💸 나간 돈</h2></div>
 <table>
-<tr><th>무엇</th><th class="c">금액</th><th class="c">성격</th></tr>
-<tr><td>고정 순지출 (톡서랍·배민+유튜브·통신료·쿠팡와우·쿠팡스포츠패스·교통비)</td><td class="c">105,000원</td><td class="c">비용 — 매달 15~20일 사이</td></tr>
-<tr><td>선지출 (헌금 2만 + 십일조 3만)</td><td class="c">50,000원</td><td class="c">비용 — 미리 떼어 나감</td></tr>
-<tr><td>타인재정 (보험료 · 아이클라우드 · 토스뱅크 상비금)</td><td class="c">137,000원</td><td class="c">비용 — 보험 엄마 부담, 아이클라우드는 내가 부담</td></tr>
-<tr><td>훈련신청비</td><td class="c">193,100원</td><td class="c">비용 — 8/25 지출, 훈련 관련</td></tr>
-<tr><td>엄마에게 상환</td><td class="c">700,000원</td><td class="c"><b>부채상환</b> — 자산도 비용도 아니고 빚이 준 것</td></tr>
-<tr class="sum"><td>8월 누계 지출 (통장 기준)</td><td>1,694,006원</td><td class="c fill">위 훈련비·상환 포함 추정</td></tr>
+<tr><th>계좌</th><th class="c">역할</th><th class="c">성격</th></tr>
+<tr><td>국민계좌</td><td class="c">고정지출 자동이체·카드결제 전용</td><td class="c">안 건드리는 돈 — 방탄계좌</td></tr>
+<tr><td>토스체크</td><td class="c">일상 소비 (변동생활비)</td><td class="c">실질적 메인 지갑</td></tr>
+<tr><td>토스저축 (나눠모으기)</td><td class="c">순수 저축 + 대출금 보관</td><td class="c">넣으면 안 꺼내는 돈</td></tr>
+</table>
+<p class="cap">배분 우선순위 — ① 국민계좌 채우기 → ② 토스체크 채우기 → ③ 나머지 전부 토스저축</p>
+
+<div class="dash-h">월 고정지출 캘린더</div>
+<table>
+<tr><th>날짜</th><th class="c">항목</th><th class="c">금액</th><th class="c">계좌</th><th class="c">결제방식</th></tr>
+<tr><td>1일</td><td class="c">기숙사 월세</td><td class="c">167,100원</td><td class="c">국민</td><td class="c">자동이체</td></tr>
+<tr><td>1일</td><td class="c">기숙사 공용비용</td><td class="c">50,000원</td><td class="c">국민</td><td class="c">자동이체</td></tr>
+<tr><td>3일</td><td class="c">교통비 (K패스, 전월분)</td><td class="c">20,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
+<tr><td>6일</td><td class="c">아이패드 스케치업 앱</td><td class="c">9,900원</td><td class="c">국민</td><td class="c">정기결제</td></tr>
+<tr><td>8일</td><td class="c">네이버플러스 멤버십</td><td class="c">4,900원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
+<tr><td>13일</td><td class="c">배민클럽+유튜브 프리미엄</td><td class="c">14,000원</td><td class="c">토스</td><td class="c">정기결제</td></tr>
+<tr><td>15일</td><td class="c">톡서랍</td><td class="c">990원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
+<tr><td>17일</td><td class="c">헌금</td><td class="c">20,000원</td><td class="c">국민</td><td class="c">용돈 입금 즉시 이체</td></tr>
+<tr><td>17일</td><td class="c">십일조</td><td class="c">30,000원</td><td class="c">국민</td><td class="c">용돈 입금 즉시 이체</td></tr>
+<tr><td>18일</td><td class="c">쿠팡 스포츠패스</td><td class="c">9,900원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
+<tr><td>20일</td><td class="c">쿠팡 와우</td><td class="c">8,000원</td><td class="c">토스</td><td class="c">정기결제</td></tr>
+<tr><td>24일</td><td class="c">보험료 (용돈 중 2만 배정·버퍼 5천)</td><td class="c">15,000원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
+<tr><td>29일</td><td class="c">클로드 Pro</td><td class="c">35,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
+<tr><td>말일</td><td class="c">통신료</td><td class="c">18,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
+<tr><td>매주</td><td class="c">변동생활비</td><td class="c">50,000원/주</td><td class="c">토스</td><td class="c">실사용 — 국민카드 결제 시 토스 예산에서 차감</td></tr>
+<tr class="sum"><td colspan="2">월 필요총액 (기준)</td><td colspan="3">국민 약 380,790원 · 토스체크 약 222,000원 (배민+유튜브 14,000 + 변동생활비 4주 200,000)</td></tr>
+</table>
+
+<div class="dash-h">특수 자금 이력 (참고)</div>
+<table>
+<tr><th>항목</th><th class="c">금액</th><th class="c">처리</th></tr>
+<tr><td>생활비대출 실행</td><td class="c">1,500,000원</td><td class="c">8월 말 수령 · 엄마께 70만원 상환 완료 (기숙사보증금30만+자부담훈련비30만+공구비10만)</td></tr>
+<tr><td>AI학업장려 학자금대출</td><td class="c">2,000,000원</td><td class="c">국민계좌 입금 · 원래 도서·교재비 용도, 사용자 확인상 일반 자금 통합 사용</td></tr>
+</table>
+
+<div class="dash-h">최근 비정기 지출·환급 (참고)</div>
+<table>
+<tr><th>항목</th><th class="c">금액</th><th class="c">계좌</th></tr>
+<tr><td>옷 구매</td><td class="c">49,810원</td><td class="c">국민계좌</td></tr>
+<tr><td>카팀스 툴벨트·파우치·수공구</td><td class="c">47,396원</td><td class="c">국민신용</td></tr>
+<tr><td>카팀스 관련 추가 구매</td><td class="c">162,500원</td><td class="c">토스저축 직접 지출</td></tr>
+<tr><td>안전화 구매</td><td class="c">96,000원</td><td class="c">토스저축 직접 지출</td></tr>
+<tr><td>축구 직관 예매비</td><td class="c">18,000원</td><td class="c">토스체크 (변동생활비 처리)</td></tr>
+<tr><td>CTA 교재 판매 (입금)</td><td class="c">+10,000원</td><td class="c">국민계좌</td></tr>
+<tr><td>K패스 7월분 교통비 환급 (입금)</td><td class="c">+16,680원</td><td class="c">토스저축</td></tr>
 </table>
 </section>
 
 <!-- ── 가계부 달력 ────────────────────── -->
 <section class="scr" data-cell="cal">
 <div class="ch"><h2>📅 가계부 달력</h2></div>
-<p class="cap">내 계좌 간 이체·타인 부담분은 회색으로 표시하고 지출에서 뺀다. 15·17·18·20·24일 외 고정비는 날짜 추정 — 확인되면 고쳐 주세요.</p>
+<p class="cap">국민/토스체크/토스저축 3계좌 기준. 항목 끝 [ ]는 어느 계좌에서 나가는지 표시.</p>
 
 <div class="cal-sumbar" id="calSumbar"></div>
 
@@ -569,33 +606,39 @@ cells.forEach(function(a){a.addEventListener('click',function(){
  if(window.innerWidth<=820) setCollapsed(true);
 });});
 
-/* 가계부 달력 — 이체·타인부담은 지출에서 제외 */
+/* 가계부 달력 — 재정계획_정리.md 기준 (2026-09-01) */
 var TRANSACTIONS=[
  /* 매달 반복 (day = 매달 그 날짜) */
- {day:15,type:"out",amount:990,what:"톡서랍",recur:true},
- {day:17,type:"out",amount:14000,what:"배민클럽+유튜브 프리미엄",recur:true},
- {day:17,type:"in",amount:300000,what:"엄마 용돈",recur:true},
- {day:18,type:"out",amount:12400,what:"쿠팡 스포츠패스",recur:true},
- {day:20,type:"out",amount:38000,what:"통신료",recur:true},
- {day:20,type:"out",amount:8000,what:"쿠팡 와우",recur:true},
- {day:24,type:"out",amount:11000,what:"아이클라우드",recur:true},
- {day:1,type:"out",amount:30000,what:"교통비 (날짜 추정)",recur:true},
- {day:1,type:"out",amount:20000,what:"헌금 (날짜 추정)",recur:true},
- {day:1,type:"out",amount:30000,what:"십일조 (날짜 추정)",recur:true},
- {day:1,type:"info",amount:15000,what:"보험료 — 엄마 부담 (날짜 추정)",recur:true},
- {day:1,type:"transfer",amount:120000,what:"토스뱅크 상비금 적립 (날짜 추정)",recur:true},
- /* 일회성 */
- {date:"2026-08-25",type:"in",amount:1500000,what:"장학재단 생활비 대출"},
- {date:"2026-08-25",type:"out",amount:193100,what:"훈련신청비"},
- {date:"2026-08-25",type:"out",amount:700000,what:"엄마에게 상환"}
+ {day:1,type:"out",amount:167100,what:"기숙사 월세",account:"국민",recur:true},
+ {day:1,type:"out",amount:50000,what:"기숙사 공용비용",account:"국민",recur:true},
+ {day:3,type:"out",amount:20000,what:"교통비(K패스 전월분)",account:"국민신용",recur:true},
+ {day:6,type:"out",amount:9900,what:"스케치업 앱",account:"국민",recur:true},
+ {day:8,type:"out",amount:4900,what:"네이버플러스",account:"국민신용",recur:true},
+ {day:13,type:"out",amount:14000,what:"배민+유튜브",account:"토스",recur:true},
+ {day:15,type:"out",amount:990,what:"톡서랍",account:"국민체크",recur:true},
+ {day:17,type:"in",amount:320000,what:"용돈(엄마)",account:"국민",recur:true},
+ {day:17,type:"out",amount:20000,what:"헌금",account:"국민",recur:true},
+ {day:17,type:"out",amount:30000,what:"십일조",account:"국민",recur:true},
+ {day:18,type:"out",amount:9900,what:"쿠팡 스포츠패스",account:"국민체크",recur:true},
+ {day:20,type:"out",amount:8000,what:"쿠팡 와우",account:"토스",recur:true},
+ {day:24,type:"out",amount:15000,what:"보험료",account:"국민체크",recur:true},
+ {day:29,type:"out",amount:35000,what:"클로드 Pro",account:"국민신용",recur:true},
+ {lastDay:true,type:"out",amount:18000,what:"통신료",account:"국민신용",recur:true},
+ {weekly:true,dow:1,type:"out",amount:50000,what:"변동생활비(주간, 월요일 가정)",account:"토스",recur:true},
+ /* 일회성 (지난 달 이력) */
+ {date:"2026-08-25",type:"in",amount:1500000,what:"생활비대출 실행",account:"국민"},
+ {date:"2026-08-25",type:"out",amount:193100,what:"훈련신청비",account:"국민"},
+ {date:"2026-08-25",type:"out",amount:700000,what:"엄마에게 상환",account:"국민"}
 ];
-var calYear=2026, calMonth=7; /* 0-indexed: 7=8월 */
+var calYear=2026, calMonth=8; /* 0-indexed: 8=9월 */
 function fmtWon(n){return n.toLocaleString('ko-KR')+'원';}
 function pad2(n){return (n<10?'0':'')+n;}
-function dayTx(y,m,d){
+function dayTx(y,m,d,daysInMonth){
  var dateStr=y+'-'+pad2(m+1)+'-'+pad2(d), out=[];
  TRANSACTIONS.forEach(function(t){
   if(t.recur && t.day===d) out.push(t);
+  else if(t.recur && t.lastDay && d===daysInMonth) out.push(t);
+  else if(t.recur && t.weekly && new Date(y,m,d).getDay()===t.dow) out.push(t);
   else if(!t.recur && t.date===dateStr) out.push(t);
  });
  return out;
@@ -614,7 +657,7 @@ function renderCal(){
  var todayStr=new Date().toISOString().slice(0,10);
  var sumIn=0,sumOut=0,sumTransfer=0;
  for(var d=1;d<=daysInMonth;d++){
-  var txs=dayTx(y,m,d);
+  var txs=dayTx(y,m,d,daysInMonth);
   var isToday=(y+'-'+pad2(m+1)+'-'+pad2(d))===todayStr;
   var cellHtml='<div class="cal-daynum">'+d+'</div>';
   txs.forEach(function(t){
@@ -622,7 +665,7 @@ function renderCal(){
    else if(t.type==='out') sumOut+=t.amount;
    else if(t.type==='transfer') sumTransfer+=t.amount;
    var sign=t.type==='in'?'+':(t.type==='out'?'-':'');
-   cellHtml+='<span class="cal-item '+t.type+'">'+sign+fmtWon(t.amount)+' '+t.what+'</span>';
+   cellHtml+='<span class="cal-item '+t.type+'">'+sign+fmtWon(t.amount)+' '+t.what+(t.account?' ['+t.account+']':'')+'</span>';
   });
   html+='<div class="cal-cell'+(isToday?' today':'')+'">'+cellHtml+'</div>';
  }
