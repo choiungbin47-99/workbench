@@ -178,12 +178,11 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
     <a class="cell" href="#/output" data-s="output"><span class="ic">🔄</span><span class="lb">시간 → 무엇이 됐나</span><span class="dot"></span></a>
   </div></div></div>
 
-  <div class="grp"><button class="gt" data-g="3"><span>돈</span><span class="cnt">4</span><span class="car">▾</span></button>
+  <div class="grp"><button class="gt" data-g="3"><span>돈</span><span class="cnt">3</span><span class="car">▾</span></button>
   <div class="gc" id="gc3"><div class="inner">
-    <a class="cell" href="#/money-in" data-s="money-in"><span class="ic">💰</span><span class="lb">들어온 돈</span><span class="dot"></span></a>
-    <a class="cell" href="#/money-out" data-s="money-out"><span class="ic">💸</span><span class="lb">나간 돈</span><span class="dot"></span></a>
+    <a class="cell" href="#/finance-overview" data-s="finance-overview"><span class="ic">💡</span><span class="lb">개요</span><span class="dot"></span></a>
+    <a class="cell" href="#/finance-status" data-s="finance-status"><span class="ic">📊</span><span class="lb">현황</span><span class="dot"></span></a>
     <a class="cell" href="#/cal" data-s="cal"><span class="ic">📅</span><span class="lb">가계부 달력</span><span class="dot"></span></a>
-    <a class="cell" href="#/ledger-input" data-s="ledger-input"><span class="ic">💳</span><span class="lb">거래 입력</span><span class="dot no"></span></a>
   </div></div></div>
 
   <div class="grp"><button class="gt" data-g="4"><span>배움</span><span class="cnt">2</span><span class="car">▾</span></button>
@@ -253,8 +252,8 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <div class="dash-h">이번 주에 볼 것</div>
 <ul class="watch">
-  <li>9/17 용돈 입금 전까지 <b>토스체크 66,774원 부족</b> — 토스저축에서 이체 필요
-    <div class="why">국민계좌는 이미 여유 47,110원 — 안 채워도 됨</div></li>
+  <li>계좌 잔액·이번 주 예산은 이제 실시간 — <b>「돈 → 현황」</b>에서 확인
+    <div class="why">거래 입력도 현황 탭에서 바로 가능</div></li>
   <li>목공 계산기 앱은 배포됐는데 <b>현장에서 한 번도 안 써 봤다</b>
     <div class="why">「목공 계산기 앱」</div></li>
   <li>홈페이지·인스타·앱·작업대가 <b>서로 연결이 안 돼 있다</b>
@@ -279,8 +278,9 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <tr><td>일정</td><td class="c">챙길 날짜</td><td class="c">서버베이스 연동됨</td></tr>
 <tr><td>시간</td><td class="c">시간 집계</td><td class="c">채움 — 라이브(초 단위 실시간 누적)</td></tr>
 <tr><td>시간</td><td class="c">시간 → 무엇이 됐나</td><td class="c">채움</td></tr>
-<tr><td>돈</td><td class="c">들어온 돈 · 나간 돈</td><td class="c">채움 — 8월 기준</td></tr>
-<tr><td>돈</td><td class="c">가계부 달력</td><td class="c">채움 — 고정비 자동 반복, 추정분 확인 필요</td></tr>
+<tr><td>돈</td><td class="c">개요</td><td class="c">채움 — 고정 수입·지출 요약</td></tr>
+<tr><td>돈</td><td class="c">현황</td><td class="c">서버베이스 연동됨 — 잔액·예산·거래입력 실시간</td></tr>
+<tr><td>돈</td><td class="c">가계부 달력</td><td class="c">채움 — 고정비 자동 반복 + 실시간 거래 반영</td></tr>
 <tr><td>배움</td><td class="c">훈련 진도</td><td class="c">서버베이스 연동됨 — 회차 자동 카운트</td></tr>
 <tr><td>배움</td><td class="c">자격 시험</td><td class="c">서버베이스 연동됨</td></tr>
 <tr><td>만든 것</td><td class="c">작품 기록</td><td class="c fill">아직</td></tr>
@@ -380,70 +380,33 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 </table>
 </section>
 
-<!-- ── 들어온 돈 ──────────────────────── -->
-<section class="scr" data-cell="money-in">
-<div class="ch"><h2>💰 들어온 돈</h2></div>
-<p class="cap" id="acctSnapshot">계산 중…</p>
-<p class="cap" id="acctRecent" style="display:none"></p>
+<!-- ── 재정 개요 ──────────────────────── -->
+<section class="scr" data-cell="finance-overview">
+<div class="ch"><h2>💡 재정 개요</h2></div>
 <table>
-<tr><th>수입원</th><th class="c">금액</th><th class="c">지급 시점</th><th class="c">확정도</th></tr>
-<tr><td>용돈 (엄마)</td><td class="c">320,000원</td><td class="c">매달 17일 (휴일이면 직전 평일)</td><td class="c">확정</td></tr>
-<tr><td>훈련장려금</td><td class="c">200,000원/월</td><td class="c">단위기간 종료 → 다음달 말일</td><td class="c">확정 (출석률 80%↑)</td></tr>
-<tr><td>특별훈련수당 (산대특·수도권)</td><td class="c">100,000원/월</td><td class="c">훈련장려금과 유사 주기</td><td class="c">확정</td></tr>
-<tr><td>구직촉진수당 (국취 1유형)</td><td class="c">600,000원/회 · 최대 6회</td><td class="c">승인 후 개시 — 10월경 예상</td><td class="c fill">승인 절차 진행 중 (신청 8/12)</td></tr>
-</table>
-</section>
-
-<!-- ── 나간 돈 ────────────────────────── -->
-<section class="scr" data-cell="money-out">
-<div class="ch"><h2>💸 나간 돈</h2></div>
-<table>
-<tr><th>계좌</th><th class="c">역할</th><th class="c">성격</th></tr>
-<tr><td>국민계좌</td><td class="c">고정지출 자동이체·카드결제 전용</td><td class="c">안 건드리는 돈 — 방탄계좌</td></tr>
-<tr><td>토스체크</td><td class="c">일상 소비 (변동생활비)</td><td class="c">실질적 메인 지갑</td></tr>
-<tr><td>토스저축 (나눠모으기)</td><td class="c">순수 저축 + 대출금 보관</td><td class="c">넣으면 안 꺼내는 돈</td></tr>
+<tr><th>계좌</th><th class="c">역할</th></tr>
+<tr><td>국민계좌</td><td class="c">고정지출 자동이체·카드결제 — 안 건드리는 돈</td></tr>
+<tr><td>토스체크</td><td class="c">일상 소비 — 메인 지갑</td></tr>
+<tr><td>토스저축</td><td class="c">순수 저축 + 대출금 — 넣으면 안 꺼내는 돈</td></tr>
 </table>
 <p class="cap">배분 우선순위 — ① 국민계좌 채우기 → ② 토스체크 채우기 → ③ 나머지 전부 토스저축</p>
 
-<div class="dash-h">월 고정지출 캘린더</div>
+<div class="dash-h">고정 수입</div>
 <table>
-<tr><th>날짜</th><th class="c">항목</th><th class="c">금액</th><th class="c">계좌</th><th class="c">결제방식</th></tr>
-<tr><td>1일</td><td class="c">기숙사 월세</td><td class="c">167,100원</td><td class="c">국민</td><td class="c">자동이체</td></tr>
-<tr><td>1일</td><td class="c">기숙사 공용비용</td><td class="c">50,000원</td><td class="c">국민</td><td class="c">자동이체</td></tr>
-<tr><td>3일</td><td class="c">교통비 (K패스, 전월분)</td><td class="c">20,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
-<tr><td>6일</td><td class="c">아이패드 스케치업 앱</td><td class="c">9,900원</td><td class="c">국민</td><td class="c">정기결제</td></tr>
-<tr><td>8일</td><td class="c">네이버플러스 멤버십</td><td class="c">4,900원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
-<tr><td>13일</td><td class="c">배민클럽+유튜브 프리미엄</td><td class="c">14,000원</td><td class="c">토스</td><td class="c">정기결제</td></tr>
-<tr><td>15일</td><td class="c">톡서랍</td><td class="c">990원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
-<tr><td>17일</td><td class="c">헌금</td><td class="c">20,000원</td><td class="c">국민</td><td class="c">용돈 입금 즉시 이체</td></tr>
-<tr><td>17일</td><td class="c">십일조</td><td class="c">30,000원</td><td class="c">국민</td><td class="c">용돈 입금 즉시 이체</td></tr>
-<tr><td>18일</td><td class="c">쿠팡 스포츠패스</td><td class="c">9,900원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
-<tr><td>20일</td><td class="c">쿠팡 와우</td><td class="c">8,000원</td><td class="c">토스</td><td class="c">정기결제</td></tr>
-<tr><td>24일</td><td class="c">보험료 (용돈 중 2만 배정·버퍼 5천)</td><td class="c">15,000원</td><td class="c">국민체크</td><td class="c">정기결제</td></tr>
-<tr><td>29일</td><td class="c">클로드 Pro</td><td class="c">35,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
-<tr><td>말일</td><td class="c">통신료</td><td class="c">18,000원</td><td class="c">국민신용</td><td class="c">발생일 당일결제</td></tr>
-<tr><td>매주</td><td class="c">변동생활비</td><td class="c">50,000원/주</td><td class="c">토스</td><td class="c">실사용 — 국민카드 결제 시 토스 예산에서 차감</td></tr>
-<tr class="sum"><td colspan="2">월 필요총액 (기준)</td><td colspan="3">국민 약 380,790원 · 토스체크 약 222,000원 (배민+유튜브 14,000 + 변동생활비 4주 200,000)</td></tr>
+<tr><th>수입원</th><th class="c">금액</th><th class="c">시점</th></tr>
+<tr><td>용돈 (엄마)</td><td class="c">320,000원</td><td class="c">매달 17일</td></tr>
+<tr><td>훈련장려금</td><td class="c">200,000원/월</td><td class="c">단위기간 종료 → 다음달 말일</td></tr>
+<tr><td>특별훈련수당</td><td class="c">100,000원/월</td><td class="c">훈련장려금과 유사 주기</td></tr>
+<tr><td>구직촉진수당</td><td class="c">600,000원×최대6회</td><td class="c fill">승인 대기 — 10월경 예상</td></tr>
 </table>
 
-<div class="dash-h">특수 자금 이력 (참고)</div>
+<div class="dash-h">고정 지출 (월 기준)</div>
 <table>
-<tr><th>항목</th><th class="c">금액</th><th class="c">처리</th></tr>
-<tr><td>생활비대출 실행</td><td class="c">1,500,000원</td><td class="c">8월 말 수령 · 엄마께 70만원 상환 완료 (기숙사보증금30만+자부담훈련비30만+공구비10만)</td></tr>
-<tr><td>AI학업장려 학자금대출</td><td class="c">2,000,000원</td><td class="c">국민계좌 입금 · 원래 도서·교재비 용도, 사용자 확인상 일반 자금 통합 사용</td></tr>
+<tr><th>계좌</th><th class="c">월 합계</th><th class="c">내역</th></tr>
+<tr><td>국민계좌</td><td class="c">약 380,790원</td><td class="c">월세·공용비·교통비·스케치업·네이버플러스·톡서랍·쿠팡스포츠패스·보험료·클로드Pro·통신료</td></tr>
+<tr><td>토스체크</td><td class="c">약 222,000원</td><td class="c">배민+유튜브·쿠팡와우·변동생활비(4주)</td></tr>
 </table>
-
-<div class="dash-h">최근 비정기 지출·환급 (참고)</div>
-<table>
-<tr><th>항목</th><th class="c">금액</th><th class="c">계좌</th></tr>
-<tr><td>옷 구매</td><td class="c">49,810원</td><td class="c">국민계좌</td></tr>
-<tr><td>카팀스 툴벨트·파우치·수공구</td><td class="c">47,396원</td><td class="c">국민신용</td></tr>
-<tr><td>카팀스 관련 추가 구매</td><td class="c">162,500원</td><td class="c">토스저축 직접 지출</td></tr>
-<tr><td>안전화 구매</td><td class="c">96,000원</td><td class="c">토스저축 직접 지출</td></tr>
-<tr><td>축구 직관 예매비</td><td class="c">18,000원</td><td class="c">토스체크 (변동생활비 처리)</td></tr>
-<tr><td>CTA 교재 판매 (입금)</td><td class="c">+10,000원</td><td class="c">국민계좌</td></tr>
-<tr><td>K패스 7월분 교통비 환급 (입금)</td><td class="c">+16,680원</td><td class="c">토스저축</td></tr>
-</table>
+<p class="cap">전체 항목·날짜별 내역은 「가계부 달력」에서.</p>
 </section>
 
 <!-- ── 가계부 달력 ────────────────────── -->
@@ -468,11 +431,25 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 </div>
 </section>
 
-<!-- ── 거래 입력 ──────────────────────── -->
-<section class="scr" data-cell="ledger-input">
-<div class="ch"><h2>💳 거래 입력</h2></div>
+<!-- ── 현황 ───────────────────────────── -->
+<section class="scr" data-cell="finance-status">
+<div class="ch"><h2>📊 현황</h2></div>
 <p class="sb-status" id="ledgerStatus">서버베이스 연결 확인 중…</p>
 
+<div class="dash-grid">
+  <div class="dash-card"><div class="k">국민계좌</div><div class="v" id="fsNat">-</div></div>
+  <div class="dash-card"><div class="k">토스체크</div><div class="v" id="fsToss">-</div></div>
+  <div class="dash-card"><div class="k">토스저축</div><div class="v" id="fsSave">-</div></div>
+  <div class="dash-card"><div class="k">합계</div><div class="v"><b id="fsTotal">-</b></div></div>
+</div>
+
+<div class="dash-h">이번 주 변동생활비 예산 (토스체크)</div>
+<div style="background:var(--field);height:10px;margin:6px 0 8px">
+  <div id="fsBudgetFill" style="background:var(--accent);height:100%;width:0%"></div>
+</div>
+<p class="cap" id="fsBudgetText">계산 중…</p>
+
+<div class="dash-h">거래 입력</div>
 <div class="field-row"><label>날짜</label><input id="ldDate" class="inp" type="date"></div>
 <div class="field-row"><label>종류</label>
   <select id="ldType" class="inp">
@@ -571,14 +548,19 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <!-- ── 인스타 ─────────────────────────── -->
 <section class="scr" data-cell="insta">
-<div class="ch"><h2>📸 인스타</h2></div>
-<table>
-<tr><th>항목</th><th class="c">이번 주</th><th class="c">메모</th></tr>
-<tr><td>계정</td><td class="c"><a class="lnk" href="https://instagram.com/wngbn__" target="_blank">@wngbn__</a></td><td class="c">le nœud · 목공</td></tr>
-<tr><td>게시</td><td class="c fill">— O건 (과정 O · 완성 O) —</td><td class="c fill">— 뭐가 반응이 좋았나 —</td></tr>
-<tr><td>들인 시간</td><td class="c fill">— 시간 —</td><td class="c fill">— 게시당 몇 분 —</td></tr>
-<tr><td>프로필에 홈페이지 주소</td><td class="c fill">— 있음 / 없음 —</td><td class="c">없으면 오늘 넣기 (1분)</td></tr>
-</table>
+<div class="ch"><h2>📸 인스타 — le nœud</h2></div>
+<p class="cap">계정: <a class="lnk" href="https://instagram.com/le.noeud_" target="_blank">@le.noeud_</a> · 데이터는 「돈 → 마케팅 대시보드」에서 입력하면 여기 자동 반영</p>
+
+<div class="dash-grid">
+  <div class="dash-card"><div class="k">현재 팔로워</div><div class="v" id="igFollowers">-</div><div class="d" id="igFollowersDelta">-</div></div>
+  <div class="dash-card"><div class="k">최근 주 게시</div><div class="v" id="igPosts">-</div></div>
+  <div class="dash-card"><div class="k">최근 주 좋아요</div><div class="v" id="igLikes">-</div></div>
+  <div class="dash-card"><div class="k">최근 주 조회수</div><div class="v" id="igViews">-</div></div>
+</div>
+
+<div class="dash-h">팔로워 추이 (최근 8주)</div>
+<div id="igChart" style="position:relative"></div>
+<p class="cap" id="igEmpty" style="display:none">아직 기록이 없습니다 — 마케팅 대시보드에서 입력해 주세요.</p>
 </section>
 
 <!-- ── 목공 계산기 앱 ─────────────────── -->
@@ -653,17 +635,19 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <div class="ch"><h2>📊 마케팅 대시보드</h2></div>
 <p class="sb-status" id="mktStatus">서버베이스 연결 확인 중…</p>
 <table>
-<tr><th>주(날짜)</th><th class="c">인스타 게시</th><th class="c">좋아요</th><th class="c">홈페이지 방문자</th><th></th></tr>
+<tr><th>주(날짜)</th><th class="c">팔로워</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">조회수</th><th class="c">방문자</th><th></th></tr>
 <tr>
 <td><input id="mktWeek" class="inp" type="date"></td>
+<td class="c"><input id="mktFollowers" class="inp" type="number" min="0"></td>
 <td class="c"><input id="mktPosts" class="inp" type="number" min="0"></td>
 <td class="c"><input id="mktLikes" class="inp" type="number" min="0"></td>
+<td class="c"><input id="mktViews" class="inp" type="number" min="0"></td>
 <td class="c"><input id="mktVisits" class="inp" type="number" min="0"></td>
 <td class="c"><button class="btn" id="mktSave" type="button" style="margin:0">저장</button></td>
 </tr>
 </table>
 <div class="dash-h">지난 기록</div>
-<table id="mktTable"><tr><th>주</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">방문자</th></tr></table>
+<table id="mktTable"><tr><th>주</th><th class="c">팔로워</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">조회수</th><th class="c">방문자</th></tr></table>
 </section>
 
 <!-- ── 포트폴리오 (서버베이스) ────────── -->
@@ -813,21 +797,35 @@ function computeBalances(){
  }
  return {bal:bal, applied:applied};
 }
+function parseDateStr(s){ var p=s.split('-').map(Number); return new Date(p[0],p[1]-1,p[2]); }
+function computeWeeklyBudget(){
+ var BUDGET = 50000;
+ var monday = mondayOf(new Date());
+ var spent = 0;
+ (LEDGER_ROWS||[]).forEach(function(t){
+  if(t.type!=='out' || normAcct(t.account)!=='토스체크') return;
+  if(parseDateStr(t.date) >= monday) spent += t.amount;
+ });
+ return {budget:BUDGET, spent:spent};
+}
 function updateAcctSnapshot(){
- var el=document.getElementById('acctSnapshot');
- if(!el) return;
  var r=computeBalances();
  var total=r.bal.국민+r.bal.토스체크+r.bal.토스저축;
- el.innerHTML='계좌 스냅샷 (기준일 '+BASELINE.date+' + 그 뒤 거래 자동 반영) · 국민계좌 '+fmtWon(r.bal.국민)+
-  ' · 토스체크 '+fmtWon(r.bal.토스체크)+' · 토스저축 '+fmtWon(r.bal.토스저축)+' = <b>'+fmtWon(total)+'</b>';
- var recentEl=document.getElementById('acctRecent');
- if(recentEl){
-  if(r.applied.length){
-   recentEl.style.display='block';
-   recentEl.innerHTML='기준일 이후 반영된 거래 '+r.applied.length+'건 — 「가계부 달력」에서 날짜별로 확인 가능';
-  } else {
-   recentEl.style.display='none';
-  }
+ var natEl=document.getElementById('fsNat'); if(natEl) natEl.textContent = fmtWon(r.bal.국민);
+ var tossEl=document.getElementById('fsToss'); if(tossEl) tossEl.textContent = fmtWon(r.bal.토스체크);
+ var saveEl=document.getElementById('fsSave'); if(saveEl) saveEl.textContent = fmtWon(r.bal.토스저축);
+ var totEl=document.getElementById('fsTotal'); if(totEl) totEl.textContent = fmtWon(total);
+
+ var b = computeWeeklyBudget();
+ var pct = b.budget>0 ? Math.min(100, Math.round(b.spent/b.budget*100)) : 0;
+ var fillEl = document.getElementById('fsBudgetFill');
+ if(fillEl){ fillEl.style.width = pct+'%'; fillEl.style.background = b.spent>b.budget ? '#d97a5e' : 'var(--accent)'; }
+ var textEl = document.getElementById('fsBudgetText');
+ if(textEl){
+  var remain = b.budget - b.spent;
+  textEl.innerHTML = remain>=0
+   ? fmtWon(b.spent)+' 사용 · <b>'+fmtWon(remain)+'</b> 남음 (예산 '+fmtWon(b.budget)+')'
+   : fmtWon(b.spent)+' 사용 · <b style="color:#d97a5e">'+fmtWon(-remain)+' 초과</b> (예산 '+fmtWon(b.budget)+')';
  }
 }
 function renderCal(){
@@ -974,13 +972,14 @@ function mktRefresh(){
     if(res.error){ setStatus('mktStatus','불러오기 오류: '+res.error.message,'err'); return; }
     setStatus('mktStatus','연결됨 · '+res.data.length+'주 기록','ok');
     var tbl = document.getElementById('mktTable');
-    tbl.innerHTML = '<tr><th>주</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">방문자</th></tr>';
+    tbl.innerHTML = '<tr><th>주</th><th class="c">팔로워</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">조회수</th><th class="c">방문자</th></tr>';
     res.data.forEach(function(row){
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td>'+esc(row.week_of)+'</td><td class="c">'+esc(row.insta_posts)+'</td>'+
-                     '<td class="c">'+esc(row.insta_likes)+'</td><td class="c">'+esc(row.site_visits)+'</td>';
+      tr.innerHTML = '<td>'+esc(row.week_of)+'</td><td class="c">'+esc(row.followers)+'</td><td class="c">'+esc(row.insta_posts)+'</td>'+
+                     '<td class="c">'+esc(row.insta_likes)+'</td><td class="c">'+esc(row.views)+'</td><td class="c">'+esc(row.site_visits)+'</td>';
       tbl.appendChild(tr);
     });
+    renderInstaAnalytics(res.data);
   });
 }
 var mktSaveBtn = document.getElementById('mktSave');
@@ -990,8 +989,10 @@ if(mktSaveBtn) mktSaveBtn.addEventListener('click', function(){
   if(!week){ alert('날짜를 선택하세요.'); return; }
   var row = {
     week_of: week,
+    followers: Number(document.getElementById('mktFollowers').value) || null,
     insta_posts: Number(document.getElementById('mktPosts').value) || 0,
     insta_likes: Number(document.getElementById('mktLikes').value) || 0,
+    views: Number(document.getElementById('mktViews').value) || null,
     site_visits: Number(document.getElementById('mktVisits').value) || 0
   };
   mktSaveBtn.disabled = true;
@@ -1002,6 +1003,69 @@ if(mktSaveBtn) mktSaveBtn.addEventListener('click', function(){
   });
 });
 mktRefresh();
+
+/* 인스타 분석 — marketing_stats 데이터를 그대로 시각화 */
+function renderInstaAnalytics(rows){
+  var igF = document.getElementById('igFollowers');
+  if(!igF) return;
+  var sorted = rows.slice().sort(function(a,b){ return a.week_of < b.week_of ? -1 : (a.week_of > b.week_of ? 1 : 0); });
+  var chartEl = document.getElementById('igChart');
+  var emptyEl = document.getElementById('igEmpty');
+  if(sorted.length===0){
+    igF.textContent='-'; document.getElementById('igFollowersDelta').textContent='-';
+    document.getElementById('igPosts').textContent='-';
+    document.getElementById('igLikes').textContent='-';
+    document.getElementById('igViews').textContent='-';
+    chartEl.innerHTML=''; emptyEl.style.display='block';
+    return;
+  }
+  emptyEl.style.display='none';
+  var latest = sorted[sorted.length-1];
+  var prev = sorted.length>1 ? sorted[sorted.length-2] : null;
+  igF.textContent = latest.followers!=null ? Number(latest.followers).toLocaleString('ko-KR')+'명' : '-';
+  var deltaEl = document.getElementById('igFollowersDelta');
+  if(prev && latest.followers!=null && prev.followers!=null){
+    var delta = latest.followers - prev.followers;
+    deltaEl.textContent = (delta>=0?'+':'')+delta+' (지난주 대비)';
+  } else { deltaEl.textContent = '지난주 비교 불가'; }
+  document.getElementById('igPosts').textContent = (latest.insta_posts!=null?latest.insta_posts:'-')+'건';
+  document.getElementById('igLikes').textContent = (latest.insta_likes!=null?latest.insta_likes:'-')+'개';
+  document.getElementById('igViews').textContent = latest.views!=null ? Number(latest.views).toLocaleString('ko-KR') : '-';
+
+  var chartData = sorted.slice(-8).filter(function(r){ return r.followers!=null; });
+  if(chartData.length===0){ chartEl.innerHTML='<p class="cap">팔로워 수 기록이 없습니다.</p>'; return; }
+  var w=560, h=140, padL=6, padR=6, padB=20, padT=10;
+  var vals = chartData.map(function(r){return Number(r.followers);});
+  var maxV = Math.max.apply(null, vals), minV = Math.min.apply(null, vals);
+  var range = Math.max(1, maxV-minV);
+  var n = chartData.length;
+  var barW = Math.min(40, (w-padL-padR)/n - 8);
+  var gap = n>1 ? ((w-padL-padR) - barW*n) / (n-1) : 0;
+  var svg = '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:140px;overflow:visible">';
+  chartData.forEach(function(r,i){
+    var x = padL + i*(barW+gap);
+    var barH = (h-padT-padB) * (((Number(r.followers)-minV)/range)*0.85+0.15);
+    var y = h-padB-barH;
+    svg += '<rect class="ig-bar" data-week="'+esc(r.week_of)+'" data-val="'+r.followers+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+barH.toFixed(1)+'" rx="3" fill="var(--accent)" style="cursor:pointer"></rect>';
+  });
+  svg += '<line x1="'+padL+'" y1="'+(h-padB)+'" x2="'+(w-padR)+'" y2="'+(h-padB)+'" stroke="var(--line)" stroke-width="1"/>';
+  svg += '</svg>';
+  chartEl.innerHTML = svg + '<div id="igTooltip" style="position:absolute;display:none;background:var(--field);border:1px solid var(--line);padding:4px 8px;font-size:8pt;color:var(--ink);pointer-events:none;white-space:nowrap;z-index:5"></div>';
+
+  var tooltip = document.getElementById('igTooltip');
+  chartEl.querySelectorAll('.ig-bar').forEach(function(bar){
+    bar.addEventListener('mouseenter', function(){
+      tooltip.textContent = bar.getAttribute('data-week')+' · '+Number(bar.getAttribute('data-val')).toLocaleString('ko-KR')+'명';
+      tooltip.style.display='block';
+    });
+    bar.addEventListener('mousemove', function(e){
+      var rect = chartEl.getBoundingClientRect();
+      tooltip.style.left = (e.clientX-rect.left+10)+'px';
+      tooltip.style.top = (e.clientY-rect.top-26)+'px';
+    });
+    bar.addEventListener('mouseleave', function(){ tooltip.style.display='none'; });
+  });
+}
 
 /* 포트폴리오 — portfolio(title,insta_url,process,learned,revise,hours) */
 function pfRefresh(){
