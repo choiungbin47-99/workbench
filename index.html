@@ -383,7 +383,8 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <!-- ── 들어온 돈 ──────────────────────── -->
 <section class="scr" data-cell="money-in">
 <div class="ch"><h2>💰 들어온 돈</h2></div>
-<p class="cap" id="acctSnapshot">계좌 스냅샷 (2026-09-01 기준) · 국민계좌 300,000원 · 토스체크 97,226원 · 토스저축 1,905,410원 = <b>2,302,636원</b></p>
+<p class="cap" id="acctSnapshot">계산 중…</p>
+<p class="cap" id="acctRecent" style="display:none"></p>
 <table>
 <tr><th>수입원</th><th class="c">금액</th><th class="c">지급 시점</th><th class="c">확정도</th></tr>
 <tr><td>용돈 (엄마)</td><td class="c">320,000원</td><td class="c">매달 17일 (휴일이면 직전 평일)</td><td class="c">확정</td></tr>
@@ -649,6 +650,17 @@ cells.forEach(function(a){a.addEventListener('click',function(){
 });});
 
 /* 가계부 달력 — 재정계획_정리.md 기준 (2026-09-01) */
+/* 계좌 잔액 자동 계산 — 기준일 이후 모든 거래를 매번 더하고 뺀다.
+   채팅으로 "오늘 국민카드로 3만원 스타벅스 썼어" 같은 걸 말하면,
+   TRANSACTIONS에 한 줄 추가하는 식으로 반영한다 (아래 항목 형식 참고). */
+var BASELINE = {date:"2026-09-01", 국민:300000, 토스체크:97226, 토스저축:1905410};
+function normAcct(a){
+ if(!a) return null;
+ if(a.indexOf('국민')===0) return '국민';
+ if(a==='토스') return '토스체크';
+ if(a==='토스체크' || a==='토스저축') return a;
+ return a;
+}
 var TRANSACTIONS=[
  /* 매달 반복 (day = 매달 그 날짜) */
  {day:1,type:"out",amount:167100,what:"기숙사 월세",account:"국민",recur:true},
@@ -685,6 +697,54 @@ function dayTx(y,m,d,daysInMonth){
  });
  return out;
 }
+function computeBalances(){
+ var bal={국민:BASELINE.국민, 토스체크:BASELINE.토스체크, 토스저축:BASELINE.토스저축};
+ var startY=Number(BASELINE.date.slice(0,4)), startM=Number(BASELINE.date.slice(5,7))-1, startD=Number(BASELINE.date.slice(8,10));
+ var cursor=new Date(startY,startM,startD+1);
+ var today=new Date(); today.setHours(0,0,0,0);
+ var applied=[];
+ while(cursor<=today){
+  var y=cursor.getFullYear(), m=cursor.getMonth(), d=cursor.getDate(), dow=cursor.getDay();
+  var daysInMonth=new Date(y,m+1,0).getDate();
+  var dstr=y+'-'+pad2(m+1)+'-'+pad2(d);
+  dayTx(y,m,d,daysInMonth).forEach(function(t){
+   if(t.type==='transfer'){
+    if(t.from && t.to){
+     var f=normAcct(t.from), to=normAcct(t.to);
+     if(bal[f]!==undefined) bal[f]-=t.amount;
+     if(bal[to]!==undefined) bal[to]+=t.amount;
+     applied.push({date:dstr,t:t});
+    }
+   } else {
+    var acc=normAcct(t.account);
+    if(acc && bal[acc]!==undefined){
+     if(t.type==='in') bal[acc]+=t.amount;
+     else if(t.type==='out') bal[acc]-=t.amount;
+     applied.push({date:dstr,t:t});
+    }
+   }
+  });
+  cursor=new Date(y,m,d+1);
+ }
+ return {bal:bal, applied:applied};
+}
+function updateAcctSnapshot(){
+ var el=document.getElementById('acctSnapshot');
+ if(!el) return;
+ var r=computeBalances();
+ var total=r.bal.국민+r.bal.토스체크+r.bal.토스저축;
+ el.innerHTML='계좌 스냅샷 (기준일 '+BASELINE.date+' + 그 뒤 거래 자동 반영) · 국민계좌 '+fmtWon(r.bal.국민)+
+  ' · 토스체크 '+fmtWon(r.bal.토스체크)+' · 토스저축 '+fmtWon(r.bal.토스저축)+' = <b>'+fmtWon(total)+'</b>';
+ var recentEl=document.getElementById('acctRecent');
+ if(recentEl){
+  if(r.applied.length){
+   recentEl.style.display='block';
+   recentEl.innerHTML='기준일 이후 반영된 거래 '+r.applied.length+'건 — 「가계부 달력」에서 날짜별로 확인 가능';
+  } else {
+   recentEl.style.display='none';
+  }
+ }
+}
 function renderCal(){
  var grid=document.getElementById('calGrid');
  if(!grid) return;
@@ -707,7 +767,8 @@ function renderCal(){
    else if(t.type==='out') sumOut+=t.amount;
    else if(t.type==='transfer') sumTransfer+=t.amount;
    var sign=t.type==='in'?'+':(t.type==='out'?'-':'');
-   cellHtml+='<span class="cal-item '+t.type+'">'+sign+fmtWon(t.amount)+' '+t.what+(t.account?' ['+t.account+']':'')+'</span>';
+   var tag = t.from&&t.to ? ' ['+t.from+'→'+t.to+']' : (t.account?' ['+t.account+']':'');
+   cellHtml+='<span class="cal-item '+t.type+'">'+sign+fmtWon(t.amount)+' '+t.what+tag+'</span>';
   });
   html+='<div class="cal-cell'+(isToday?' today':'')+'">'+cellHtml+'</div>';
  }
@@ -722,6 +783,7 @@ var calPrevBtn=document.getElementById('calPrev'), calNextBtn=document.getElemen
 if(calPrevBtn) calPrevBtn.addEventListener('click',function(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();});
 if(calNextBtn) calNextBtn.addEventListener('click',function(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();});
 renderCal();
+updateAcctSnapshot();
 
 /* ── 서버베이스(Supabase) 연결 ─────────────────────────────
    STEP 2에서 받은 Project URL과 anon public 키를 아래 두 줄에 넣으세요.
