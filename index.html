@@ -549,7 +549,10 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <!-- ── 인스타 ─────────────────────────── -->
 <section class="scr" data-cell="insta">
 <div class="ch"><h2>📸 인스타 — le nœud</h2></div>
-<p class="cap">계정: <a class="lnk" href="https://instagram.com/le.noeud_" target="_blank">@le.noeud_</a> · 데이터는 「돈 → 마케팅 대시보드」에서 입력하면 여기 자동 반영</p>
+<p class="cap">계정: <a class="lnk" href="https://instagram.com/le.noeud_" target="_blank">@le.noeud_</a> · 데이터는 「돈 → 마케팅 대시보드」에서 입력하거나 아래 API 동기화로 자동 반영</p>
+
+<button class="btn" id="igSyncBtn" type="button">지금 동기화 (Instagram API)</button>
+<p class="sb-status" id="igSyncStatus" style="margin-top:8px">IG_ACCESS_TOKEN·IG_USER_ID 시크릿을 Supabase에 등록하면 사용 가능</p>
 
 <div class="dash-grid">
   <div class="dash-card"><div class="k">현재 팔로워</div><div class="v" id="igFollowers">-</div><div class="d" id="igFollowersDelta">-</div></div>
@@ -1066,6 +1069,35 @@ function renderInstaAnalytics(rows){
     bar.addEventListener('mouseleave', function(){ tooltip.style.display='none'; });
   });
 }
+
+/* 인스타 API 동기화 — Edge Function 호출 (토큰은 서버 시크릿에만 존재) */
+var igSyncBtn = document.getElementById('igSyncBtn');
+if(igSyncBtn) igSyncBtn.addEventListener('click', function(){
+  var statusEl = document.getElementById('igSyncStatus');
+  igSyncBtn.disabled = true;
+  if(statusEl) statusEl.textContent = '동기화 중…';
+  fetch(SUPABASE_URL + '/functions/v1/instagram-sync', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'apikey': SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  }).then(function(res){ return res.json().then(function(body){ return {ok:res.ok, body:body}; }); })
+    .then(function(r){
+      igSyncBtn.disabled = false;
+      if(!r.ok || r.body.error){
+        var msg = r.body.error ? (r.body.error.message || JSON.stringify(r.body.error)) : '알 수 없는 오류';
+        if(statusEl) statusEl.textContent = '동기화 실패: ' + msg;
+        return;
+      }
+      if(statusEl) statusEl.textContent = '동기화 완료 · ' + r.body.row.week_of + ' 기준 반영됨';
+      mktRefresh();
+    }).catch(function(e){
+      igSyncBtn.disabled = false;
+      if(statusEl) statusEl.textContent = '동기화 실패: ' + String(e);
+    });
+});
 
 /* 포트폴리오 — portfolio(title,insta_url,process,learned,revise,hours) */
 function pfRefresh(){
