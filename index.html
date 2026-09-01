@@ -4,6 +4,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>Le nœud Workspace · 최웅빈</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --bg:#121110;--surface:#1c1a17;--field:#171512;
@@ -75,6 +76,16 @@ tr.sum td{border-top:1px solid var(--line-strong);font-weight:700}
 .cap{font-size:8.5pt;color:var(--muted);margin:-8px 0 16px}
 .cap b{color:var(--muted)}
 a.lnk{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(217,160,94,.4)}
+.inp{background:var(--field);color:var(--ink);border:1px solid var(--line);padding:6px 8px;font:inherit;font-size:9.5pt;width:100%}
+.inp:focus{outline:1px solid var(--accent)}
+.btn{background:var(--accent);color:var(--btn-ink);border:0;padding:7px 18px;font:inherit;font-size:9.5pt;
+     font-weight:700;cursor:pointer;margin:9px 0 6px}
+.btn:hover{background:var(--accent-deep)}
+.sb-status{font-size:8.5pt;color:var(--muted);margin:-4px 0 12px}
+.sb-status.err{color:#d97a5e}
+.sb-status.ok{color:var(--accent)}
+.field-row{margin-bottom:10px}
+.field-row label{display:block;font-size:8pt;color:var(--muted);letter-spacing:.05em;margin-bottom:4px}
 @media(max-width:820px){.app{flex-direction:column}aside{width:auto;flex:none;height:auto;position:static}}
 
 /* 요약 대시보드 */
@@ -198,8 +209,15 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
     <a class="cell" href="#/people" data-s="people"><span class="ic">🤝</span><span class="lb">만난 사람</span><span class="dot no"></span></a>
   </div></div></div>
 
-  <div class="grp"><button class="gt" data-g="8"><span>나의 사명</span><span class="cnt">1</span><span class="car">▾</span></button>
+  <div class="grp"><button class="gt" data-g="8"><span>기록 · 서버베이스</span><span class="cnt">3</span><span class="car">▾</span></button>
   <div class="gc" id="gc8"><div class="inner">
+    <a class="cell" href="#/study" data-s="study"><span class="ic">📓</span><span class="lb">공부방</span><span class="dot no"></span></a>
+    <a class="cell" href="#/marketing" data-s="marketing"><span class="ic">📊</span><span class="lb">마케팅 대시보드</span><span class="dot no"></span></a>
+    <a class="cell" href="#/portfolio2" data-s="portfolio2"><span class="ic">🗂️</span><span class="lb">포트폴리오</span><span class="dot no"></span></a>
+  </div></div></div>
+
+  <div class="grp"><button class="gt" data-g="9"><span>나의 사명</span><span class="cnt">1</span><span class="car">▾</span></button>
+  <div class="gc" id="gc9"><div class="inner">
     <a class="cell" href="#/mission" data-s="mission"><span class="ic">⚖️</span><span class="lb">나의 사명</span><span class="dot"></span></a>
   </div></div></div>
 </aside>
@@ -269,6 +287,7 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <tr><td>밖으로</td><td class="c">le nœud 홈페이지</td><td class="c">채움</td></tr>
 <tr><td>밖으로</td><td class="c">인스타 · 목공 계산기 앱</td><td class="c">앱은 배포 완료 · 인스타는 아직</td></tr>
 <tr><td>일 · 취업</td><td class="c">포지 · 지원 / 만난 사람</td><td class="c fill">아직</td></tr>
+<tr><td>기록 · 서버베이스</td><td class="c">공부방 · 마케팅 대시보드 · 포트폴리오 <b>(10회차 추가)</b></td><td class="c fill">틀 채움 — 서버베이스 URL/키 연결 대기 중</td></tr>
 <tr><td>나의 사명</td><td class="c">나의 사명</td><td class="c">채움</td></tr>
 </table>
 </section>
@@ -458,6 +477,49 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 </table>
 </section>
 
+<!-- ── 공부방 (서버베이스) ────────────── -->
+<section class="scr" data-cell="study">
+<div class="ch"><h2>📓 공부방</h2></div>
+<p class="sb-status" id="studyStatus">서버베이스 연결 확인 중…</p>
+<textarea id="studyInput" class="inp" rows="4" placeholder="오늘 공부한 것을 적으세요"></textarea>
+<button class="btn" id="studySave" type="button">저장</button>
+<div class="dash-h">지난 기록</div>
+<ul class="watch" id="studyList"></ul>
+</section>
+
+<!-- ── 마케팅 대시보드 (서버베이스) ───── -->
+<section class="scr" data-cell="marketing">
+<div class="ch"><h2>📊 마케팅 대시보드</h2></div>
+<p class="sb-status" id="mktStatus">서버베이스 연결 확인 중…</p>
+<table>
+<tr><th>주(날짜)</th><th class="c">인스타 게시</th><th class="c">좋아요</th><th class="c">홈페이지 방문자</th><th></th></tr>
+<tr>
+<td><input id="mktWeek" class="inp" type="date"></td>
+<td class="c"><input id="mktPosts" class="inp" type="number" min="0"></td>
+<td class="c"><input id="mktLikes" class="inp" type="number" min="0"></td>
+<td class="c"><input id="mktVisits" class="inp" type="number" min="0"></td>
+<td class="c"><button class="btn" id="mktSave" type="button" style="margin:0">저장</button></td>
+</tr>
+</table>
+<div class="dash-h">지난 기록</div>
+<table id="mktTable"><tr><th>주</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">방문자</th></tr></table>
+</section>
+
+<!-- ── 포트폴리오 (서버베이스) ────────── -->
+<section class="scr" data-cell="portfolio2">
+<div class="ch"><h2>🗂️ 포트폴리오</h2></div>
+<p class="sb-status" id="pfStatus">서버베이스 연결 확인 중…</p>
+<div class="field-row"><label>작품명</label><input id="pfTitle" class="inp"></div>
+<div class="field-row"><label>인스타 링크</label><input id="pfUrl" class="inp" placeholder="https://instagram.com/p/..."></div>
+<div class="field-row"><label>어떤 과정에서 만들었나</label><textarea id="pfProcess" class="inp" rows="2"></textarea></div>
+<div class="field-row"><label>배운 것</label><textarea id="pfLearned" class="inp" rows="2"></textarea></div>
+<div class="field-row"><label>다시 만든다면 고칠 점</label><textarea id="pfRevise" class="inp" rows="2"></textarea></div>
+<div class="field-row"><label>걸린 시간</label><input id="pfHours" class="inp" placeholder="예: 6시간"></div>
+<button class="btn" id="pfSave" type="button">저장</button>
+<div class="dash-h">쌓인 것</div>
+<ul class="watch" id="pfList"></ul>
+</section>
+
 <!-- ── 나의 사명 ──────────────────────── -->
 <section class="scr" data-cell="mission">
 <div class="ch"><h2>⚖️ 나의 사명</h2></div>
@@ -575,4 +637,134 @@ var calPrevBtn=document.getElementById('calPrev'), calNextBtn=document.getElemen
 if(calPrevBtn) calPrevBtn.addEventListener('click',function(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();});
 if(calNextBtn) calNextBtn.addEventListener('click',function(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();});
 renderCal();
+
+/* ── 서버베이스(Supabase) 연결 ─────────────────────────────
+   STEP 2에서 받은 Project URL과 anon public 키를 아래 두 줄에 넣으세요.
+   (Project Settings → API 메뉴에서 복사. anon public만 쓰고 service_role은 절대 쓰지 마세요) */
+var SUPABASE_URL = "여기에_Project_URL_붙여넣기";
+var SUPABASE_ANON_KEY = "여기에_anon_public_키_붙여넣기";
+
+var sb = null;
+if (SUPABASE_URL.indexOf('여기에') === -1 && SUPABASE_ANON_KEY.indexOf('여기에') === -1 && window.supabase) {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+function esc(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDT(s){ try{ return new Date(s).toLocaleString('ko-KR'); }catch(e){ return s; } }
+function setStatus(id, msg, cls){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'sb-status' + (cls ? ' ' + cls : '');
+}
+if (!sb) {
+  ['studyStatus','mktStatus','pfStatus'].forEach(function(id){
+    setStatus(id, '서버베이스 연결 안 됨 — 위 스크립트의 URL/anon key를 채워주세요.', 'err');
+  });
+}
+
+/* 공부방 — study_notes(content) */
+function studyRefresh(){
+  if(!sb) return;
+  sb.from('study_notes').select('*').order('created_at',{ascending:false}).limit(30).then(function(res){
+    if(res.error){ setStatus('studyStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    setStatus('studyStatus','연결됨 · '+res.data.length+'개 기록','ok');
+    var list = document.getElementById('studyList'); list.innerHTML='';
+    res.data.forEach(function(row){
+      var li=document.createElement('li');
+      li.innerHTML = '<div>'+esc(row.content)+'</div><div class="why">'+fmtDT(row.created_at)+'</div>';
+      list.appendChild(li);
+    });
+  });
+}
+var studySaveBtn = document.getElementById('studySave');
+if(studySaveBtn) studySaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var input = document.getElementById('studyInput');
+  var val = input.value.trim();
+  if(!val) return;
+  studySaveBtn.disabled = true;
+  sb.from('study_notes').insert({content:val}).then(function(res){
+    studySaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    input.value='';
+    studyRefresh();
+  });
+});
+studyRefresh();
+
+/* 마케팅 대시보드 — marketing_stats(week_of,insta_posts,insta_likes,site_visits) */
+function mktRefresh(){
+  if(!sb) return;
+  sb.from('marketing_stats').select('*').order('week_of',{ascending:false}).limit(30).then(function(res){
+    if(res.error){ setStatus('mktStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    setStatus('mktStatus','연결됨 · '+res.data.length+'주 기록','ok');
+    var tbl = document.getElementById('mktTable');
+    tbl.innerHTML = '<tr><th>주</th><th class="c">게시</th><th class="c">좋아요</th><th class="c">방문자</th></tr>';
+    res.data.forEach(function(row){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+esc(row.week_of)+'</td><td class="c">'+esc(row.insta_posts)+'</td>'+
+                     '<td class="c">'+esc(row.insta_likes)+'</td><td class="c">'+esc(row.site_visits)+'</td>';
+      tbl.appendChild(tr);
+    });
+  });
+}
+var mktSaveBtn = document.getElementById('mktSave');
+if(mktSaveBtn) mktSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var week = document.getElementById('mktWeek').value;
+  if(!week){ alert('날짜를 선택하세요.'); return; }
+  var row = {
+    week_of: week,
+    insta_posts: Number(document.getElementById('mktPosts').value) || 0,
+    insta_likes: Number(document.getElementById('mktLikes').value) || 0,
+    site_visits: Number(document.getElementById('mktVisits').value) || 0
+  };
+  mktSaveBtn.disabled = true;
+  sb.from('marketing_stats').insert(row).then(function(res){
+    mktSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    mktRefresh();
+  });
+});
+mktRefresh();
+
+/* 포트폴리오 — portfolio(title,insta_url,process,learned,revise,hours) */
+function pfRefresh(){
+  if(!sb) return;
+  sb.from('portfolio').select('*').order('created_at',{ascending:false}).limit(30).then(function(res){
+    if(res.error){ setStatus('pfStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    setStatus('pfStatus','연결됨 · '+res.data.length+'개','ok');
+    var list = document.getElementById('pfList'); list.innerHTML='';
+    res.data.forEach(function(row){
+      var li=document.createElement('li');
+      li.innerHTML =
+        '<div><b>'+esc(row.title)+'</b>'+(row.insta_url?' · <a class="lnk" href="'+esc(row.insta_url)+'" target="_blank">인스타 보기</a>':'')+'</div>'+
+        '<div class="why">과정: '+esc(row.process)+'</div>'+
+        '<div class="why">배운 것: '+esc(row.learned)+'</div>'+
+        '<div class="why">고칠 점: '+esc(row.revise)+' · 걸린 시간: '+esc(row.hours)+'</div>';
+      list.appendChild(li);
+    });
+  });
+}
+var pfSaveBtn = document.getElementById('pfSave');
+if(pfSaveBtn) pfSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var row = {
+    title: document.getElementById('pfTitle').value.trim(),
+    insta_url: document.getElementById('pfUrl').value.trim(),
+    process: document.getElementById('pfProcess').value.trim(),
+    learned: document.getElementById('pfLearned').value.trim(),
+    revise: document.getElementById('pfRevise').value.trim(),
+    hours: document.getElementById('pfHours').value.trim()
+  };
+  if(!row.title){ alert('작품명을 적어주세요.'); return; }
+  pfSaveBtn.disabled = true;
+  sb.from('portfolio').insert(row).then(function(res){
+    pfSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    ['pfTitle','pfUrl','pfProcess','pfLearned','pfRevise','pfHours'].forEach(function(id){document.getElementById(id).value='';});
+    pfRefresh();
+  });
+});
+pfRefresh();
 </script>
