@@ -981,14 +981,17 @@ function tickLive(){
 
  var listEl=document.getElementById('todayBlocks');
  if(listEl){
-  var now=new Date(), todayDow=now.getDay();
+  var now=new Date(), nowSec2=todaySeconds(now), todayDow=now.getDay();
   var items=SCHEDULE.filter(function(b){return b.dow===todayDow;});
   if(items.length===0){
    listEl.innerHTML='<li>오늘은 예정된 일정이 없습니다.</li>';
   } else {
    listEl.innerHTML=items.map(function(b){
-    var info=r.todayInfo[b.cat];
-    return '<li>'+CAT_LABEL[b.cat]+' '+b.s+'–'+b.e+'<div class="why">'+info.status+'</div></li>';
+    var s=timeToSec(b.s), e=timeToSec(b.e), status;
+    if(nowSec2>=s && nowSec2<e) status='진행 중';
+    else if(nowSec2>=e) status='오늘 완료';
+    else status=Math.ceil((s-nowSec2)/60)+'분 후 시작';
+    return '<li>'+CAT_LABEL[b.cat]+' '+b.s+'–'+b.e+'<div class="why">'+status+'</div></li>';
    }).join('');
   }
  }
