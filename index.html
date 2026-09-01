@@ -242,8 +242,8 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
   </div>
   <div class="dash-card">
     <div class="k">훈련 진도</div>
-    <div class="v"><b>9</b> / 20회차</div>
-    <div class="d">11회차 남음</div>
+    <div class="v"><b id="dashTrCount">-</b> / 20회차</div>
+    <div class="d" id="dashTrRemain">-</div>
   </div>
   <div class="dash-card">
     <div class="k">사명</div>
@@ -263,9 +263,8 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 
 <div class="dash-h">다가오는 일정</div>
 <table>
-<tr><th>날짜</th><th class="c">무엇</th></tr>
-<tr><td class="fill">— 다음 수업일 —</td><td class="c">AX 건축목공반 10회차 — 과제 제출</td></tr>
-<tr><td class="fill">— 큐넷 원서접수 —</td><td class="c">건축목공기능사</td></tr>
+<thead><tr><th>날짜</th><th class="c">무엇</th></tr></thead>
+<tbody id="dashDeadlines"><tr><td colspan="2" class="fill">불러오는 중…</td></tr></tbody>
 </table>
 <a class="goto" href="#/deadlines">챙길 날짜 전체 보기 →</a>
 </section>
@@ -277,13 +276,13 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <tr><th>묶음</th><th class="c">칸</th><th class="c">지금</th></tr>
 <tr><td>나</td><td class="c">요약 · 내 지도</td><td class="c">채움</td></tr>
 <tr><td>일정</td><td class="c">구글 캘린더</td><td class="c">연동됨</td></tr>
-<tr><td>일정</td><td class="c">챙길 날짜</td><td class="c fill">아직</td></tr>
+<tr><td>일정</td><td class="c">챙길 날짜</td><td class="c">서버베이스 연동됨</td></tr>
 <tr><td>시간</td><td class="c">시간 집계</td><td class="c">채움 — 라이브(초 단위 실시간 누적)</td></tr>
 <tr><td>시간</td><td class="c">시간 → 무엇이 됐나</td><td class="c">채움</td></tr>
 <tr><td>돈</td><td class="c">들어온 돈 · 나간 돈</td><td class="c">채움 — 8월 기준</td></tr>
 <tr><td>돈</td><td class="c">가계부 달력</td><td class="c">채움 — 고정비 자동 반복, 추정분 확인 필요</td></tr>
-<tr><td>배움</td><td class="c">훈련 진도</td><td class="c">채움</td></tr>
-<tr><td>배움</td><td class="c">자격 시험</td><td class="c fill">아직 — 큐넷 확인 필요</td></tr>
+<tr><td>배움</td><td class="c">훈련 진도</td><td class="c">서버베이스 연동됨 — 회차 자동 카운트</td></tr>
+<tr><td>배움</td><td class="c">자격 시험</td><td class="c">서버베이스 연동됨</td></tr>
 <tr><td>만든 것</td><td class="c">작품 기록</td><td class="c fill">아직</td></tr>
 <tr><td>밖으로</td><td class="c">le nœud 홈페이지</td><td class="c">채움</td></tr>
 <tr><td>밖으로</td><td class="c">인스타 · 목공 계산기 앱</td><td class="c">앱은 배포 완료 · 인스타는 아직</td></tr>
@@ -305,13 +304,13 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <!-- ── 챙길 날짜 ──────────────────────── -->
 <section class="scr" data-cell="deadlines">
 <div class="ch"><h2>📌 챙길 날짜</h2></div>
-<table>
-<tr><th>날짜</th><th class="c">무엇</th><th class="c">놓치면</th></tr>
-<tr><td class="fill">— 다음 수업일 —</td><td class="c">AX 건축목공반 10회차 — 과제 제출</td><td class="c">시간 집계 2주 비교를 못 한다</td></tr>
-<tr><td class="fill">— 큐넷 원서접수 —</td><td class="c">건축목공기능사</td><td class="c">다음 회차까지 3~4개월</td></tr>
-<tr><td class="fill">— 실기시험 —</td><td class="c fill">—</td><td class="c fill">—</td></tr>
-<tr><td class="fill">— 수료 —</td><td class="c">출석률 유지</td><td class="c">수료 불가 · 장려금 정산</td></tr>
-</table>
+<p class="sb-status" id="dlStatus">서버베이스 연결 확인 중…</p>
+<div class="field-row"><label>날짜</label><input id="dlDate" class="inp" type="date"></div>
+<div class="field-row"><label>무엇</label><input id="dlWhat" class="inp" placeholder="예: 건축목공기능사 실기시험"></div>
+<div class="field-row"><label>놓치면</label><input id="dlConsequence" class="inp" placeholder="예: 다음 회차까지 3~4개월"></div>
+<button class="btn" id="dlSave" type="button">저장</button>
+<div class="dash-h">챙길 것</div>
+<ul class="watch" id="dlList"></ul>
 </section>
 
 <!-- ── 시간 집계 ──────────────────────── -->
@@ -518,23 +517,33 @@ a.goto{display:inline-block;margin-top:8px;font-size:8.5pt;color:var(--accent);t
 <!-- ── 훈련 진도 ──────────────────────── -->
 <section class="scr" data-cell="progress">
 <div class="ch"><h2>📚 훈련 진도</h2></div>
-<table>
-<tr><th>항목</th><th class="c">지금</th><th class="c">남은 것</th></tr>
-<tr><td>바오밥 AX 건축목공반 2기 (AI 수업)</td><td class="c"><b>9 / 20회차</b></td><td class="c">11회차</td></tr>
-<tr><td>수업 산출물</td><td class="c">홈페이지 · 목공 계산기 앱(배포 완료) · 작업대 <b>3개</b></td><td class="c">작업대 매주 채우기 · 앱 현장에서 써 보기</td></tr>
-<tr><td class="fill">— 실습 작품 —</td><td class="c fill">— O개 완성 —</td><td class="c fill">— 수료작 —</td></tr>
-</table>
+<p class="sb-status" id="trStatus">서버베이스 연결 확인 중…</p>
+<div class="dash-grid">
+  <div class="dash-card"><div class="k">바오밥 AX 건축목공반 2기</div><div class="v"><b id="trCount">-</b> / 20회차</div><div class="d" id="trRemain">-</div></div>
+</div>
+<p class="cap">수업 산출물 — 홈페이지 · 목공 계산기 앱(배포 완료) · 작업대 3개</p>
+
+<div class="field-row"><label>회차</label><input id="trSession" class="inp" type="number" min="1" max="20"></div>
+<div class="field-row"><label>날짜</label><input id="trDate" class="inp" type="date"></div>
+<div class="field-row"><label>메모</label><input id="trNote" class="inp" placeholder="오늘 배운 것 · 만든 것"></div>
+<button class="btn" id="trSave" type="button">저장</button>
+
+<div class="dash-h">회차 기록</div>
+<ul class="watch" id="trList"></ul>
 </section>
 
 <!-- ── 자격 시험 ──────────────────────── -->
 <section class="scr" data-cell="cert">
 <div class="ch"><h2>🎓 자격 시험</h2></div>
-<table>
-<tr><th>시험</th><th class="c">상태</th><th class="c">날짜</th></tr>
-<tr><td>건축목공기능사 필기</td><td class="c fill">— 합격 / 준비 중 / 미접수 —</td><td class="c fill">—</td></tr>
-<tr><td>건축목공기능사 실기</td><td class="c">시험 대비반 시작 예정 — 화·목 3시간 × 13회 (39시간)</td><td class="c fill">— 대비반 시작일 확인 —</td></tr>
-<tr><td class="fill">— 원서접수 기간 —</td><td class="c fill">—</td><td class="c fill">— 챙길 날짜에도 넣기 —</td></tr>
-</table>
+<p class="sb-status" id="certStatus">서버베이스 연결 확인 중…</p>
+<div class="field-row"><label>시험명</label><input id="ceName" class="inp" placeholder="예: 건축목공기능사 실기"></div>
+<div class="field-row"><label>상태</label><input id="ceStatusInput" class="inp" placeholder="예: 준비 중 / 합격 / 접수 대기"></div>
+<div class="field-row"><label>날짜</label><input id="ceDate" class="inp" type="date"></div>
+<div class="field-row"><label>메모</label><input id="ceNote" class="inp"></div>
+<button class="btn" id="ceSave" type="button">저장</button>
+
+<div class="dash-h">현황</div>
+<ul class="watch" id="ceList"></ul>
 <p class="cap">큐넷: <a class="lnk" href="https://q-net.or.kr" target="_blank">q-net.or.kr</a></p>
 </section>
 
@@ -1103,6 +1112,139 @@ function loadLedgerRows(){
   });
 }
 loadLedgerRows();
+
+/* 챙길 날짜 — deadlines(date,what,consequence,done) */
+var dlDateEl = document.getElementById('dlDate');
+if(dlDateEl) dlDateEl.value = new Date().toISOString().slice(0,10);
+
+function dlRefresh(){
+  if(!sb) return;
+  sb.from('deadlines').select('*').order('date',{ascending:true}).then(function(res){
+    if(res.error){ setStatus('dlStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    var rows = res.data || [];
+    setStatus('dlStatus','연결됨 · '+rows.length+'건','ok');
+    var list = document.getElementById('dlList');
+    if(!list) return;
+    if(rows.length===0){ list.innerHTML='<li>챙길 날짜가 없습니다.</li>'; return; }
+    list.innerHTML = rows.map(function(r){
+      var style = r.done ? 'style="opacity:.5;text-decoration:line-through"' : '';
+      return '<li '+style+'>'+r.date+' — '+esc(r.what||'')+
+             '<div class="why">'+(r.consequence?'놓치면: '+esc(r.consequence)+' · ':'')+
+             '<a class="lnk" href="javascript:void(0)" data-dl-toggle="'+r.id+'" data-dl-done="'+(!r.done)+'">'+(r.done?'다시 열기':'완료로 표시')+'</a></div></li>';
+    }).join('');
+    list.querySelectorAll('[data-dl-toggle]').forEach(function(a){
+      a.addEventListener('click', function(){
+        var id = a.getAttribute('data-dl-toggle');
+        var done = a.getAttribute('data-dl-done') === 'true';
+        sb.from('deadlines').update({done:done}).eq('id', id).then(function(){ dlRefresh(); });
+      });
+    });
+
+    var dashEl = document.getElementById('dashDeadlines');
+    if(dashEl){
+      var upcoming = rows.filter(function(r){ return !r.done; }).slice(0,3);
+      dashEl.innerHTML = upcoming.length ? upcoming.map(function(r){
+        return '<tr><td>'+r.date+'</td><td class="c">'+esc(r.what||'')+'</td></tr>';
+      }).join('') : '<tr><td colspan="2" class="fill">챙길 날짜가 없습니다.</td></tr>';
+    }
+  });
+}
+var dlSaveBtn = document.getElementById('dlSave');
+if(dlSaveBtn) dlSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var date = document.getElementById('dlDate').value;
+  var what = document.getElementById('dlWhat').value.trim();
+  var consequence = document.getElementById('dlConsequence').value.trim();
+  if(!date || !what){ alert('날짜와 내용을 채워주세요.'); return; }
+  dlSaveBtn.disabled = true;
+  sb.from('deadlines').insert({date:date, what:what, consequence:consequence, done:false}).then(function(res){
+    dlSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    document.getElementById('dlWhat').value='';
+    document.getElementById('dlConsequence').value='';
+    dlRefresh();
+  });
+});
+dlRefresh();
+
+/* 훈련 진도 — training_log(session_number,date,note), 총 20회차 */
+var TOTAL_SESSIONS = 20;
+var trDateEl = document.getElementById('trDate');
+if(trDateEl) trDateEl.value = new Date().toISOString().slice(0,10);
+
+function trRefresh(){
+  if(!sb) return;
+  sb.from('training_log').select('*').order('session_number',{ascending:false}).then(function(res){
+    if(res.error){ setStatus('trStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    var rows = res.data || [];
+    setStatus('trStatus','연결됨 · '+rows.length+'개 기록','ok');
+    var maxSession = rows.reduce(function(m,r){ return Math.max(m, r.session_number||0); }, 0);
+    var cEl=document.getElementById('trCount'); if(cEl) cEl.textContent = maxSession;
+    var rEl=document.getElementById('trRemain'); if(rEl) rEl.textContent = (TOTAL_SESSIONS-maxSession)+'회차 남음';
+    var dcEl=document.getElementById('dashTrCount'); if(dcEl) dcEl.textContent = maxSession;
+    var drEl=document.getElementById('dashTrRemain'); if(drEl) drEl.textContent = (TOTAL_SESSIONS-maxSession)+'회차 남음';
+    var list = document.getElementById('trList');
+    if(list){
+      list.innerHTML = rows.length ? rows.map(function(r){
+        return '<li>'+r.session_number+'회차 · '+r.date+'<div class="why">'+esc(r.note||'')+'</div></li>';
+      }).join('') : '<li>아직 기록이 없습니다.</li>';
+    }
+  });
+}
+var trSaveBtn = document.getElementById('trSave');
+if(trSaveBtn) trSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var session = Number(document.getElementById('trSession').value);
+  var date = document.getElementById('trDate').value;
+  var note = document.getElementById('trNote').value.trim();
+  if(!session || !date){ alert('회차와 날짜를 채워주세요.'); return; }
+  trSaveBtn.disabled = true;
+  sb.from('training_log').insert({session_number:session, date:date, note:note}).then(function(res){
+    trSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    document.getElementById('trSession').value='';
+    document.getElementById('trNote').value='';
+    trRefresh();
+  });
+});
+trRefresh();
+
+/* 자격 시험 — cert_exams(exam_name,status,exam_date,note) */
+function ceRefresh(){
+  if(!sb) return;
+  sb.from('cert_exams').select('*').order('exam_date',{ascending:true, nullsFirst:false}).then(function(res){
+    if(res.error){ setStatus('certStatus','불러오기 오류: '+res.error.message,'err'); return; }
+    var rows = res.data || [];
+    setStatus('certStatus','연결됨 · '+rows.length+'건','ok');
+    var list = document.getElementById('ceList');
+    if(list){
+      list.innerHTML = rows.length ? rows.map(function(r){
+        return '<li>'+esc(r.exam_name||'')+' — '+esc(r.status||'')+(r.exam_date?' · '+r.exam_date:'')+
+               (r.note?'<div class="why">'+esc(r.note)+'</div>':'')+'</li>';
+      }).join('') : '<li>등록된 시험이 없습니다.</li>';
+    }
+  });
+}
+var ceSaveBtn = document.getElementById('ceSave');
+if(ceSaveBtn) ceSaveBtn.addEventListener('click', function(){
+  if(!sb){ alert('서버베이스가 연결되어 있지 않습니다.'); return; }
+  var name = document.getElementById('ceName').value.trim();
+  var status = document.getElementById('ceStatusInput').value.trim();
+  var date = document.getElementById('ceDate').value || null;
+  var note = document.getElementById('ceNote').value.trim();
+  if(!name){ alert('시험명을 적어주세요.'); return; }
+  ceSaveBtn.disabled = true;
+  sb.from('cert_exams').insert({exam_name:name, status:status, exam_date:date, note:note}).then(function(res){
+    ceSaveBtn.disabled = false;
+    if(res.error){ alert('저장 오류: '+res.error.message); return; }
+    document.getElementById('ceName').value='';
+    document.getElementById('ceStatusInput').value='';
+    document.getElementById('ceDate').value='';
+    document.getElementById('ceNote').value='';
+    ceRefresh();
+  });
+});
+ceRefresh();
 
 /* ── 시간 집계 라이브 엔진 ──────────────────────────────────
    dow: 0=일 1=월 2=화 3=수 4=목 5=금 6=토 */
